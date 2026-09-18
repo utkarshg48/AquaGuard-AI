@@ -2,23 +2,42 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>AquaGuard AI</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
 </head>
+
 
 <body>
 
+
+    <!-- =====================================================
+         APPLICATION
+    ====================================================== -->
+
     <div class="app">
 
-        <!-- =====================================================
+
+        <!-- =================================================
              SIDEBAR
-        ====================================================== -->
+        ================================================== -->
 
         <aside class="sidebar">
+
+
+            <!-- LOGO -->
 
             <div class="logo">
 
@@ -27,82 +46,186 @@
                 </div>
 
                 <div class="logo-text">
-                    <h2>AquaGuard</h2>
-                    <span>AI WATER SYSTEM</span>
+
+                    <h2>
+                        AquaGuard
+                    </h2>
+
+                    <span>
+                        AI WATER SYSTEM
+                    </span>
+
                 </div>
 
             </div>
 
 
+            <!-- NAVIGATION -->
+
             <nav class="sidebar-nav">
 
-                <button class="nav-item active" data-page="dashboard">
-                    <span class="nav-icon">📊</span>
-                    <span>Dashboard</span>
+
+                <button
+                    class="nav-item active"
+                    data-page="dashboard"
+                >
+
+                    <span class="nav-icon">
+                        📊
+                    </span>
+
+                    <span>
+                        Dashboard
+                    </span>
+
                 </button>
 
-                <button class="nav-item" data-page="monitoring">
-                    <span class="nav-icon">💧</span>
-                    <span>DMA Monitoring</span>
+
+                <button
+                    class="nav-item"
+                    data-page="monitoring"
+                >
+
+                    <span class="nav-icon">
+                        💧
+                    </span>
+
+                    <span>
+                        DMA Monitoring
+                    </span>
+
                 </button>
 
-                <button class="nav-item" data-page="prototype">
-                    <span class="nav-icon">🔧</span>
-                    <span>Physical Prototype</span>
+
+                <button
+                    class="nav-item"
+                    data-page="prototype"
+                >
+
+                    <span class="nav-icon">
+                        🔧
+                    </span>
+
+                    <span>
+                        Physical Prototype
+                    </span>
+
                 </button>
 
-                <button class="nav-item" data-page="alerts">
-                    <span class="nav-icon">🚨</span>
-                    <span>Alerts</span>
+
+                <button
+                    class="nav-item"
+                    data-page="alerts"
+                >
+
+                    <span class="nav-icon">
+                        🚨
+                    </span>
+
+                    <span>
+                        Alerts
+                    </span>
+
                 </button>
 
-                <button class="nav-item" data-page="ai">
-                    <span class="nav-icon">🤖</span>
-                    <span>AI Prediction</span>
+
+                <button
+                    class="nav-item"
+                    data-page="ai"
+                >
+
+                    <span class="nav-icon">
+                        🤖
+                    </span>
+
+                    <span>
+                        AI Prediction
+                    </span>
+
                 </button>
 
-                <button class="nav-item" data-page="accounting">
-                    <span class="nav-icon">📈</span>
-                    <span>Water Accounting</span>
+
+                <button
+                    class="nav-item"
+                    data-page="accounting"
+                >
+
+                    <span class="nav-icon">
+                        📈
+                    </span>
+
+                    <span>
+                        Water Accounting
+                    </span>
+
                 </button>
 
-                <button class="nav-item" data-page="settings">
-                    <span class="nav-icon">⚙️</span>
-                    <span>Settings</span>
+
+                <button
+                    class="nav-item"
+                    data-page="settings"
+                >
+
+                    <span class="nav-icon">
+                        ⚙️
+                    </span>
+
+                    <span>
+                        Settings
+                    </span>
+
                 </button>
+
 
             </nav>
 
+
+            <!-- SYSTEM STATUS -->
 
             <div class="system-status">
 
                 <div class="status-indicator"></div>
 
                 <div>
-                    <strong>System Online</strong>
-                    <p>All systems operational</p>
+
+                    <strong>
+                        System Online
+                    </strong>
+
+                    <p>
+                        All systems operational
+                    </p>
+
                 </div>
 
             </div>
 
+
         </aside>
 
 
-        <!-- =====================================================
+
+        <!-- =================================================
              MAIN CONTENT
-        ====================================================== -->
+        ================================================== -->
 
         <main class="main-content">
 
-            <!-- HEADER -->
+
+            <!-- =================================================
+                 HEADER
+            ================================================== -->
 
             <header class="top-header">
 
+
                 <div class="header-left">
+
 
                     <button class="mobile-menu">
                         ☰
                     </button>
+
 
                     <div>
 
@@ -116,41 +239,65 @@
 
                     </div>
 
+
                 </div>
+
 
 
                 <div class="header-right">
 
+
                     <div class="system-live">
+
                         <span class="live-dot"></span>
+
                         LIVE
+
                     </div>
 
+
                     <button class="notification-button">
+
                         🔔
-                        <span class="notification-count">3</span>
+
+                        <span class="notification-count">
+                            3
+                        </span>
+
                     </button>
+
 
                     <div class="profile">
                         UG
                     </div>
 
+
                 </div>
+
 
             </header>
 
 
-            <!-- =====================================================
-                 PAGE 1 : DASHBOARD
-            ====================================================== -->
 
-            <section id="dashboard" class="page active-page">
+            <!-- =================================================
+                 PAGE 1 : DASHBOARD
+            ================================================== -->
+
+            <section
+                id="dashboard"
+                class="page active-page"
+            >
+
+
+                <!-- PAGE HEADING -->
 
                 <div class="page-heading">
 
                     <div>
 
-                        <h2>Overview</h2>
+                        <h2>
+                            Overview
+                        </h2>
 
                         <p>
                             Real-time overview of the AquaGuard water network
@@ -161,9 +308,13 @@
                 </div>
 
 
+
                 <!-- KPI CARDS -->
 
                 <div class="stats-grid">
+
+
+                    <!-- WATER INPUT -->
 
                     <div class="stat-card">
 
@@ -173,7 +324,9 @@
 
                         <div class="stat-content">
 
-                            <span>Total Water Input</span>
+                            <span>
+                                Total Water Input
+                            </span>
 
                             <h3>
                                 24,680 L
@@ -188,6 +341,9 @@
                     </div>
 
 
+
+                    <!-- WATER ACCOUNTED -->
+
                     <div class="stat-card">
 
                         <div class="stat-icon green">
@@ -196,7 +352,9 @@
 
                         <div class="stat-content">
 
-                            <span>Water Accounted</span>
+                            <span>
+                                Water Accounted
+                            </span>
 
                             <h3>
                                 22,940 L
@@ -211,6 +369,9 @@
                     </div>
 
 
+
+                    <!-- WATER LOSS -->
+
                     <div class="stat-card">
 
                         <div class="stat-icon orange">
@@ -219,7 +380,9 @@
 
                         <div class="stat-content">
 
-                            <span>Unaccounted Water</span>
+                            <span>
+                                Unaccounted Water
+                            </span>
 
                             <h3>
                                 1,740 L
@@ -234,6 +397,9 @@
                     </div>
 
 
+
+                    <!-- ALERTS -->
+
                     <div class="stat-card">
 
                         <div class="stat-icon red">
@@ -242,7 +408,9 @@
 
                         <div class="stat-content">
 
-                            <span>Active Alerts</span>
+                            <span>
+                                Active Alerts
+                            </span>
 
                             <h3>
                                 03
@@ -256,7 +424,9 @@
 
                     </div>
 
+
                 </div>
+
 
 
                 <!-- FLOW + AI -->
@@ -267,6 +437,7 @@
                     <!-- FLOW MONITORING -->
 
                     <div class="card">
+
 
                         <div class="card-header">
 
@@ -306,9 +477,10 @@
                         </div>
 
 
+
                         <div
-                            class="chart-area"
                             id="flow-chart"
+                            class="chart-area"
                         >
 
                             <div class="chart-placeholder">
@@ -318,31 +490,48 @@
                         </div>
 
 
+
                         <div class="chart-legend">
 
+
                             <span>
+
                                 <i class="legend-blue"></i>
+
                                 Flow 1
+
                             </span>
 
+
                             <span>
+
                                 <i class="legend-green"></i>
+
                                 Flow 2
+
                             </span>
 
+
                             <span>
+
                                 <i class="legend-orange"></i>
+
                                 Difference
+
                             </span>
+
 
                         </div>
 
+
                     </div>
+
 
 
                     <!-- AI SUMMARY -->
 
                     <div class="card ai-summary-card">
+
 
                         <div class="card-header">
 
@@ -358,6 +547,7 @@
 
                             </div>
 
+
                             <span class="ai-badge">
                                 AI
                             </span>
@@ -365,24 +555,32 @@
                         </div>
 
 
+
                         <div class="ai-summary">
+
 
                             <div class="ai-large-icon">
                                 🤖
                             </div>
 
+
                             <h3>
                                 Increasing Water Loss Risk
                             </h3>
 
+
                             <p>
-                                Flow imbalance has increased compared
-                                with the historical baseline.
+
+                                Flow imbalance has increased
+                                compared with the historical baseline.
+
                             </p>
+
 
                             <div class="prediction-status warning-status">
                                 WARNING
                             </div>
+
 
                             <button
                                 class="primary-button"
@@ -391,16 +589,21 @@
                                 View AI Analysis →
                             </button>
 
+
                         </div>
+
 
                     </div>
 
+
                 </div>
+
 
 
                 <!-- DMA OVERVIEW -->
 
                 <div class="card">
+
 
                     <div class="card-header">
 
@@ -427,6 +630,7 @@
                     </div>
 
 
+
                     <div class="dma-grid">
 
 
@@ -438,6 +642,7 @@
                             tabindex="0"
                             aria-label="Open DMA-01 details"
                         >
+
 
                             <div class="dma-card-header">
 
@@ -453,6 +658,7 @@
 
                                 </div>
 
+
                                 <span class="status-badge normal">
                                     NORMAL
                                 </span>
@@ -461,6 +667,7 @@
 
 
                             <div class="dma-values">
+
 
                                 <div>
 
@@ -487,19 +694,23 @@
 
                                 </div>
 
+
                             </div>
 
 
                             <div class="dma-footer">
 
                                 Difference:
+
                                 <strong>
                                     1.5 L/min
                                 </strong>
 
                             </div>
 
+
                         </div>
+
 
 
                         <!-- DMA 02 -->
@@ -510,6 +721,7 @@
                             tabindex="0"
                             aria-label="Open DMA-02 details"
                         >
+
 
                             <div class="dma-card-header">
 
@@ -525,6 +737,7 @@
 
                                 </div>
 
+
                                 <span class="status-badge warning">
                                     WARNING
                                 </span>
@@ -533,6 +746,7 @@
 
 
                             <div class="dma-values">
+
 
                                 <div>
 
@@ -559,19 +773,23 @@
 
                                 </div>
 
+
                             </div>
 
 
                             <div class="dma-footer">
 
                                 Difference:
+
                                 <strong>
                                     3.4 L/min
                                 </strong>
 
                             </div>
 
+
                         </div>
+
 
 
                         <!-- DMA 03 -->
@@ -582,6 +800,7 @@
                             tabindex="0"
                             aria-label="Open DMA-03 details"
                         >
+
 
                             <div class="dma-card-header">
 
@@ -597,6 +816,7 @@
 
                                 </div>
 
+
                                 <span class="status-badge danger">
                                     ALERT
                                 </span>
@@ -605,6 +825,7 @@
 
 
                             <div class="dma-values">
+
 
                                 <div>
 
@@ -631,28 +852,35 @@
 
                                 </div>
 
+
                             </div>
 
 
                             <div class="dma-footer">
 
                                 Difference:
+
                                 <strong>
                                     10.6 L/min
                                 </strong>
 
                             </div>
 
+
                         </div>
+
 
                     </div>
 
+
                 </div>
+
 
 
                 <!-- PHYSICAL PROTOTYPE SUMMARY -->
 
                 <div class="card prototype-summary">
+
 
                     <div class="card-header">
 
@@ -668,6 +896,7 @@
 
                         </div>
 
+
                         <span class="hardware-badge">
                             REAL HARDWARE
                         </span>
@@ -676,6 +905,7 @@
 
 
                     <div class="prototype-mini-grid">
+
 
                         <div>
 
@@ -689,6 +919,7 @@
 
                         </div>
 
+
                         <div>
 
                             <span>
@@ -700,6 +931,7 @@
                             </strong>
 
                         </div>
+
 
                         <div>
 
@@ -713,6 +945,7 @@
 
                         </div>
 
+
                         <div>
 
                             <span>
@@ -724,6 +957,7 @@
                             </strong>
 
                         </div>
+
 
                         <div>
 
@@ -737,6 +971,7 @@
 
                         </div>
 
+
                         <div>
 
                             <span>
@@ -749,18 +984,26 @@
 
                         </div>
 
+
                     </div>
 
+
                 </div>
+
 
             </section>
 
 
-            <!-- =====================================================
-                 PAGE 2 : DMA MONITORING
-            ====================================================== -->
 
-            <section id="monitoring" class="page">
+            <!-- =================================================
+                 PAGE 2 : DMA MONITORING
+            ================================================== -->
+
+            <section
+                id="monitoring"
+                class="page"
+            >
+
 
                 <div class="page-heading">
 
@@ -771,7 +1014,7 @@
                         </h2>
 
                         <p>
-                            Monitor all district water zones
+                            Monitor flow, tank level and valve status
                         </p>
 
                     </div>
@@ -779,164 +1022,158 @@
                 </div>
 
 
-                <div class="monitoring-layout">
+
+                <!-- NETWORK SUMMARY -->
+
+                <div class="stats-grid">
 
 
-                    <!-- MAP -->
+                    <div class="stat-card">
 
-                    <div class="card network-map-card">
-
-                        <div class="card-header">
-
-                            <div>
-
-                                <h3>
-                                    Water Network Map
-                                </h3>
-
-                                <p>
-                                    Monitored DMA locations
-                                </p>
-
-                            </div>
-
+                        <div class="stat-icon blue">
+                            💧
                         </div>
 
+                        <div class="stat-content">
 
-                        <div
-                            id="network-map"
-                            class="map-placeholder"
-                        >
-                            Network Map
+                            <span>
+                                Total DMAs
+                            </span>
+
+                            <h3>
+                                03
+                            </h3>
+
                         </div>
 
                     </div>
 
 
-                    <!-- SIDE PANEL -->
+                    <div class="stat-card">
 
-                    <div class="monitoring-side-panel">
-
-
-                        <div class="card">
-
-                            <h3>
-                                Network Status
-                            </h3>
-
-                            <div class="network-status-list">
-
-                                <div>
-
-                                    <span>
-                                        Total DMAs
-                                    </span>
-
-                                    <strong>
-                                        04
-                                    </strong>
-
-                                </div>
-
-
-                                <div>
-
-                                    <span>
-                                        Normal
-                                    </span>
-
-                                    <strong class="text-green">
-                                        01
-                                    </strong>
-
-                                </div>
-
-
-                                <div>
-
-                                    <span>
-                                        Warning
-                                    </span>
-
-                                    <strong class="text-orange">
-                                        01
-                                    </strong>
-
-                                </div>
-
-
-                                <div>
-
-                                    <span>
-                                        Alert
-                                    </span>
-
-                                    <strong class="text-red">
-                                        02
-                                    </strong>
-
-                                </div>
-
-                            </div>
-
+                        <div class="stat-icon green">
+                            ✓
                         </div>
 
+                        <div class="stat-content">
 
-                        <div class="card">
+                            <span>
+                                Normal
+                            </span>
 
                             <h3>
-                                System Health
+                                01
                             </h3>
-
-
-                            <div class="health-item">
-
-                                <span>
-                                    ESP32 Devices
-                                </span>
-
-                                <strong>
-                                    2 / 2
-                                </strong>
-
-                            </div>
-
-
-                            <div class="health-item">
-
-                                <span>
-                                    Flow Sensors
-                                </span>
-
-                                <strong>
-                                    2 / 2
-                                </strong>
-
-                            </div>
-
-
-                            <div class="health-item">
-
-                                <span>
-                                    Valves
-                                </span>
-
-                                <strong>
-                                    2 / 2
-                                </strong>
-
-                            </div>
 
                         </div>
 
                     </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon orange">
+                            ⚠
+                        </div>
+
+                        <div class="stat-content">
+
+                            <span>
+                                Warning
+                            </span>
+
+                            <h3>
+                                01
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon red">
+                            !
+                        </div>
+
+                        <div class="stat-content">
+
+                            <span>
+                                Alert
+                            </span>
+
+                            <h3>
+                                01
+                            </h3>
+
+                        </div>
+
+                    </div>
+
 
                 </div>
 
 
-                <!-- MONITORING TABLE -->
+
+                <!-- TANK LEVEL GRAPH -->
 
                 <div class="card">
+
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Tank Level Monitoring
+                            </h3>
+
+                            <p>
+                                Water level trend across the monitored period
+                            </p>
+
+                        </div>
+
+
+                        <span class="ai-badge">
+                            SIMULATED
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        id="tank-level-chart"
+                        class="chart-area"
+                    >
+
+                        Tank Level Chart
+
+                    </div>
+
+
+                    <div class="chart-legend">
+
+                        <span>
+
+                            <i class="legend-blue"></i>
+
+                            Tank Level
+
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- DMA TABLE -->
+
+                <div class="card">
+
 
                     <div class="card-header">
 
@@ -955,9 +1192,12 @@
                     </div>
 
 
+
                     <div class="monitoring-table-container">
 
+
                         <table class="monitoring-table">
+
 
                             <thead>
 
@@ -996,7 +1236,9 @@
                             </thead>
 
 
+
                             <tbody>
+
 
                                 <tr>
 
@@ -1033,6 +1275,7 @@
                                     </td>
 
                                 </tr>
+
 
 
                                 <tr>
@@ -1072,6 +1315,7 @@
                                 </tr>
 
 
+
                                 <tr>
 
                                     <td>
@@ -1108,22 +1352,32 @@
 
                                 </tr>
 
+
                             </tbody>
+
 
                         </table>
 
+
                     </div>
 
+
                 </div>
+
 
             </section>
 
 
-            <!-- =====================================================
-                 PAGE 3 : PHYSICAL PROTOTYPE
-            ====================================================== -->
 
-            <section id="prototype" class="page">
+            <!-- =================================================
+                 PAGE 3 : PHYSICAL PROTOTYPE
+            ================================================== -->
+
+            <section
+                id="prototype"
+                class="page"
+            >
+
 
                 <div class="page-heading">
 
@@ -1139,6 +1393,7 @@
 
                     </div>
 
+
                     <span class="hardware-badge">
                         REAL HARDWARE
                     </span>
@@ -1146,7 +1401,11 @@
                 </div>
 
 
+
+                <!-- PROTOTYPE STATUS -->
+
                 <div class="prototype-status-banner">
+
 
                     <div>
 
@@ -1160,10 +1419,15 @@
 
                     </div>
 
+
                     <div class="status-indicator-large"></div>
+
 
                 </div>
 
+
+
+                <!-- SENSOR VALUES -->
 
                 <div class="stats-grid prototype-stats">
 
@@ -1219,8 +1483,12 @@
 
                     </div>
 
+
                 </div>
 
+
+
+                <!-- VALVES + SENSOR HEALTH -->
 
                 <div class="dashboard-grid">
 
@@ -1228,6 +1496,7 @@
                     <!-- VALVE CONTROL -->
 
                     <div class="card">
+
 
                         <div class="card-header">
 
@@ -1270,6 +1539,7 @@
                             </div>
 
 
+
                             <div class="valve-card">
 
                                 <span>
@@ -1290,14 +1560,18 @@
 
                             </div>
 
+
                         </div>
 
+
                     </div>
+
 
 
                     <!-- SENSOR HEALTH -->
 
                     <div class="card">
+
 
                         <div class="card-header">
 
@@ -1314,6 +1588,7 @@
                             </div>
 
                         </div>
+
 
 
                         <div class="sensor-list">
@@ -1383,20 +1658,29 @@
 
                             </div>
 
+
                         </div>
+
 
                     </div>
 
+
                 </div>
+
 
             </section>
 
 
-            <!-- =====================================================
-                 PAGE 4 : ALERTS
-            ====================================================== -->
 
-            <section id="alerts" class="page">
+            <!-- =================================================
+                 PAGE 4 : ALERTS
+            ================================================== -->
+
+            <section
+                id="alerts"
+                class="page"
+            >
+
 
                 <div class="page-heading">
 
@@ -1414,6 +1698,9 @@
 
                 </div>
 
+
+
+                <!-- ALERT SUMMARY -->
 
                 <div class="alert-summary-grid">
 
@@ -1469,13 +1756,20 @@
 
                     </div>
 
+
                 </div>
 
+
+
+                <!-- ALERT LIST -->
 
                 <div class="alerts-list">
 
 
+                    <!-- CRITICAL -->
+
                     <div class="alert-card critical">
+
 
                         <div class="alert-icon">
                             🚨
@@ -1516,10 +1810,15 @@
                             View Details
                         </button>
 
+
                     </div>
 
 
+
+                    <!-- WARNING -->
+
                     <div class="alert-card warning-alert">
+
 
                         <div class="alert-icon">
                             ⚠️
@@ -1560,18 +1859,26 @@
                             View Details
                         </button>
 
+
                     </div>
 
+
                 </div>
+
 
             </section>
 
 
-            <!-- =====================================================
-                 PAGE 5 : AI PREDICTION
-            ====================================================== -->
 
-            <section id="ai" class="page">
+            <!-- =================================================
+                 PAGE 5 : AI PREDICTION
+            ================================================== -->
+
+            <section
+                id="ai"
+                class="page"
+            >
+
 
                 <div class="page-heading">
 
@@ -1587,6 +1894,7 @@
 
                     </div>
 
+
                     <span class="ai-badge">
                         EXPERIMENTAL
                     </span>
@@ -1594,40 +1902,54 @@
                 </div>
 
 
+
+                <!-- AI GRID -->
+
                 <div class="ai-dashboard-grid">
 
 
-                    <!-- MAIN AI -->
+                    <!-- MAIN PREDICTION -->
 
                     <div class="card ai-main-card">
+
 
                         <div class="ai-large-icon">
                             🤖
                         </div>
 
+
                         <span class="prediction-label">
                             CURRENT PREDICTION
                         </span>
+
 
                         <h2>
                             Increasing Water Loss Risk
                         </h2>
 
+
                         <p>
-                            The system has detected a persistent flow
-                            imbalance compared with the historical baseline.
+
+                            The system has detected a persistent
+                            flow imbalance compared with the
+                            historical baseline.
+
                         </p>
+
 
                         <div class="prediction-status warning-status">
                             WARNING
                         </div>
 
+
                     </div>
+
 
 
                     <!-- OBSERVED PATTERN -->
 
                     <div class="card">
+
 
                         <h3>
                             Observed Pattern
@@ -1635,6 +1957,7 @@
 
 
                         <div class="pattern-list">
+
 
                             <div>
 
@@ -1687,18 +2010,23 @@
 
                             </div>
 
+
                         </div>
+
 
                     </div>
 
 
-                    <!-- RECOMMENDATION -->
+
+                    <!-- ACTION -->
 
                     <div class="card">
+
 
                         <h3>
                             Recommended Action
                         </h3>
+
 
                         <div class="recommendation-box">
 
@@ -1707,20 +2035,24 @@
                             </div>
 
                             <p>
-                                Inspect the monitored pipeline section
-                                associated with DMA-03.
+                                Inspect the monitored pipeline
+                                section associated with DMA-03.
                             </p>
 
                         </div>
 
+
                     </div>
+
 
                 </div>
 
 
-                <!-- TIMELINE -->
+
+                <!-- PREDICTION TIMELINE -->
 
                 <div class="card">
+
 
                     <div class="card-header">
 
@@ -1737,6 +2069,7 @@
                         </div>
 
                     </div>
+
 
 
                     <div class="timeline">
@@ -1793,18 +2126,26 @@
 
                         </div>
 
+
                     </div>
 
+
                 </div>
+
 
             </section>
 
 
-            <!-- =====================================================
-                 PAGE 6 : WATER ACCOUNTING
-            ====================================================== -->
 
-            <section id="accounting" class="page">
+            <!-- =================================================
+                 PAGE 6 : WATER ACCOUNTING
+            ================================================== -->
+
+            <section
+                id="accounting"
+                class="page"
+            >
+
 
                 <div class="page-heading">
 
@@ -1822,6 +2163,9 @@
 
                 </div>
 
+
+
+                <!-- ACCOUNTING SUMMARY -->
 
                 <div class="accounting-summary">
 
@@ -1877,78 +2221,149 @@
 
                     </div>
 
+
                 </div>
 
 
-                <div class="dashboard-grid">
+
+                <!-- WATER USAGE GRAPH -->
+
+                <div class="card">
 
 
-                    <div class="card">
+                    <div class="card-header">
 
-                        <div class="card-header">
+                        <div>
 
-                            <div>
+                            <h3>
+                                Water Supplied vs Accounted
+                            </h3>
 
-                                <h3>
-                                    Daily Water Usage
-                                </h3>
-
-                                <p>
-                                    Water accounting trend
-                                </p>
-
-                            </div>
+                            <p>
+                                Daily water accounting trend
+                            </p>
 
                         </div>
 
 
-                        <div class="chart-placeholder">
-                            Water Usage Chart
-                        </div>
+                        <span class="ai-badge">
+                            SIMULATED
+                        </span>
 
                     </div>
 
 
-                    <div class="card">
+                    <div
+                        id="water-usage-chart"
+                        class="chart-area"
+                    >
 
-                        <div class="card-header">
-
-                            <div>
-
-                                <h3>
-                                    Loss Distribution
-                                </h3>
-
-                                <p>
-                                    Unaccounted water
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="chart-placeholder">
-                            Loss Distribution Chart
-                        </div>
+                        Water Usage Chart
 
                     </div>
 
+
+                    <div class="chart-legend">
+
+
+                        <span>
+
+                            <i class="legend-blue"></i>
+
+                            Water Supplied
+
+                        </span>
+
+
+                        <span>
+
+                            <i class="legend-green"></i>
+
+                            Water Accounted
+
+                        </span>
+
+
+                    </div>
+
+
                 </div>
+
+
+
+                <!-- WATER LOSS GRAPH -->
+
+                <div class="card">
+
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Unaccounted Water Trend
+                            </h3>
+
+                            <p>
+                                Change in estimated water loss
+                            </p>
+
+                        </div>
+
+
+                        <span class="ai-badge">
+                            SIMULATED
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        id="water-loss-chart"
+                        class="chart-area"
+                    >
+
+                        Water Loss Chart
+
+                    </div>
+
+
+                    <div class="chart-legend">
+
+
+                        <span>
+
+                            <i class="legend-orange"></i>
+
+                            Unaccounted Water
+
+                        </span>
+
+
+                    </div>
+
+
+                </div>
+
 
             </section>
 
 
-            <!-- =====================================================
+
+            <!-- =================================================
                  PAGE 7 : DMA DETAILS
-            ====================================================== -->
+            ================================================== -->
 
-            <section id="dma-details" class="page">
+            <section
+                id="dma-details"
+                class="page"
+            >
 
 
-                <!-- PAGE HEADER -->
+                <!-- DETAIL HEADER -->
 
                 <div class="page-heading">
+
 
                     <div>
 
@@ -1971,6 +2386,7 @@
                         "
                     >
 
+
                         <button
                             class="secondary-button"
                             data-page-link="monitoring"
@@ -1986,9 +2402,12 @@
                             NORMAL
                         </span>
 
+
                     </div>
 
+
                 </div>
+
 
 
                 <!-- DMA SUMMARY -->
@@ -2079,17 +2498,18 @@
 
                     </div>
 
+
                 </div>
 
 
-                <!-- FLOW + NETWORK -->
+
+                <!-- FLOW COMPARISON -->
 
                 <div class="dashboard-grid">
 
 
-                    <!-- FLOW COMPARISON -->
-
                     <div class="card">
+
 
                         <div class="card-header">
 
@@ -2120,11 +2540,12 @@
                             id="dma-detail-chart"
                             class="chart-area"
                         >
-                            Flow data
+                            Flow Data
                         </div>
 
 
                         <div class="chart-legend">
+
 
                             <span>
 
@@ -2143,14 +2564,18 @@
 
                             </span>
 
+
                         </div>
 
+
                     </div>
+
 
 
                     <!-- NETWORK INFORMATION -->
 
                     <div class="card">
+
 
                         <div class="card-header">
 
@@ -2245,32 +2670,35 @@
 
                             </div>
 
+
                         </div>
 
+
                     </div>
+
 
                 </div>
 
 
-                <!-- LOCATION + ANALYSIS -->
+
+                <!-- AI ANALYSIS -->
 
                 <div class="dashboard-grid">
 
 
-                    <!-- LOCATION -->
-
                     <div class="card">
+
 
                         <div class="card-header">
 
                             <div>
 
                                 <h3>
-                                    Monitored Location
+                                    Water Level
                                 </h3>
 
                                 <p>
-                                    Representative DMA location
+                                    Current monitored tank level
                                 </p>
 
                             </div>
@@ -2279,36 +2707,46 @@
 
 
                         <div
-                            id="dma-detail-map"
-                            class="map-placeholder"
+                            class="chart-area"
+                            style="
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                            "
                         >
 
-                            <div>
 
-                                <strong
-                                    id="detail-location-name"
-                                >
-                                    DMA-01 Location
-                                </strong>
+                            <div
+                                style="
+                                    width:180px;
+                                    height:22px;
+                                    background:#e6eef3;
+                                    border-radius:5px;
+                                    overflow:hidden;
+                                "
+                            >
 
-                                <br>
-
-                                <span
-                                    id="detail-coordinates"
-                                >
-                                    19.0760° N, 72.8777° E
-                                </span>
+                                <div
+                                    id="dma-tank-progress"
+                                    style="
+                                        width:72%;
+                                        height:100%;
+                                        background:#2187c9;
+                                    "
+                                ></div>
 
                             </div>
 
+
                         </div>
+
 
                     </div>
 
 
-                    <!-- AI INTERPRETATION -->
 
                     <div class="card">
+
 
                         <div class="card-header">
 
@@ -2338,9 +2776,12 @@
                                 💧
                             </div>
 
+
                             <p id="detail-analysis">
-                                Flow is currently within the expected
-                                range for this monitored area.
+
+                                Flow is currently within the
+                                expected range for this monitored area.
+
                             </p>
 
                         </div>
@@ -2377,20 +2818,30 @@
 
                             </div>
 
+
                         </div>
+
 
                     </div>
 
+
                 </div>
+
+
 
             </section>
 
 
-            <!-- =====================================================
-                 PAGE 8 : SETTINGS
-            ====================================================== -->
 
-            <section id="settings" class="page">
+            <!-- =================================================
+                 PAGE 8 : SETTINGS
+            ================================================== -->
+
+            <section
+                id="settings"
+                class="page"
+            >
+
 
                 <div class="page-heading">
 
@@ -2409,12 +2860,14 @@
                 </div>
 
 
+
                 <div class="settings-grid">
 
 
-                    <!-- DETECTION SETTINGS -->
+                    <!-- DETECTION -->
 
                     <div class="card">
+
 
                         <h3>
                             Detection Settings
@@ -2423,6 +2876,7 @@
 
                         <div class="setting-item">
 
+
                             <div>
 
                                 <strong>
@@ -2430,8 +2884,8 @@
                                 </strong>
 
                                 <p>
-                                    Trigger an anomaly when the difference
-                                    exceeds this value.
+                                    Trigger an anomaly when the
+                                    difference exceeds this value.
                                 </p>
 
                             </div>
@@ -2444,10 +2898,13 @@
                                 step="0.1"
                             >
 
+
                         </div>
 
 
+
                         <div class="setting-item">
+
 
                             <div>
 
@@ -2456,7 +2913,8 @@
                                 </strong>
 
                                 <p>
-                                    Required time before generating an alert.
+                                    Required time before generating
+                                    an alert.
                                 </p>
 
                             </div>
@@ -2482,14 +2940,18 @@
 
                             </select>
 
+
                         </div>
 
+
                     </div>
+
 
 
                     <!-- NOTIFICATIONS -->
 
                     <div class="card">
+
 
                         <h3>
                             Notification Settings
@@ -2497,6 +2959,7 @@
 
 
                         <div class="setting-toggle">
+
 
                             <div>
 
@@ -2516,10 +2979,13 @@
                                 checked
                             >
 
+
                         </div>
 
 
+
                         <div class="setting-toggle">
+
 
                             <div>
 
@@ -2539,14 +3005,18 @@
                                 checked
                             >
 
+
                         </div>
+
 
                     </div>
 
 
-                    <!-- SYSTEM INFORMATION -->
+
+                    <!-- SYSTEM -->
 
                     <div class="card">
+
 
                         <h3>
                             System Information
@@ -2607,17 +3077,24 @@
 
                             </div>
 
+
                         </div>
+
 
                     </div>
 
+
                 </div>
+
 
             </section>
 
+
         </main>
 
+
     </div>
+
 
 
     <!-- =====================================================
@@ -2625,6 +3102,7 @@
     ====================================================== -->
 
     <script src="script.js"></script>
+
 
 </body>
 

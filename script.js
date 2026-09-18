@@ -1,6 +1,7 @@
 /* =========================================================
    AQUAGUARD AI
-   MAIN JAVASCRIPT
+   COMPLETE JAVASCRIPT
+   WITH ALERT SOUND
 ========================================================= */
 
 
@@ -17,7 +18,7 @@ const pageInfo = {
 
     monitoring: {
         title: "DMA Monitoring",
-        subtitle: "Monitor all district water zones"
+        subtitle: "Monitor flow, tank level and valve status"
     },
 
     prototype: {
@@ -85,16 +86,12 @@ const mobileMenu =
 
 function showPage(pageId) {
 
-    /* Hide all pages */
-
     pages.forEach((page) => {
 
         page.classList.remove("active-page");
 
     });
 
-
-    /* Find requested page */
 
     const selectedPage =
         document.getElementById(pageId);
@@ -105,16 +102,13 @@ function showPage(pageId) {
     }
 
 
-    /* Show requested page */
-
     selectedPage.classList.add("active-page");
 
-
-    /* Update sidebar */
 
     navItems.forEach((item) => {
 
         item.classList.remove("active");
+
 
         if (item.dataset.page === pageId) {
 
@@ -124,8 +118,6 @@ function showPage(pageId) {
 
     });
 
-
-    /* Update header */
 
     if (pageInfo[pageId]) {
 
@@ -138,8 +130,6 @@ function showPage(pageId) {
     }
 
 
-    /* Close mobile menu */
-
     if (sidebar) {
 
         sidebar.classList.remove("mobile-open");
@@ -147,11 +137,12 @@ function showPage(pageId) {
     }
 
 
-    /* Scroll to top */
-
     window.scrollTo({
+
         top: 0,
+
         behavior: "smooth"
+
     });
 
 }
@@ -175,17 +166,16 @@ navItems.forEach((item) => {
 
 
 /* =========================================================
-   INTERNAL PAGE BUTTONS
+   INTERNAL BUTTON NAVIGATION
 ========================================================= */
 
 pageLinks.forEach((button) => {
 
     button.addEventListener("click", () => {
 
-        const targetPage =
-            button.dataset.pageLink;
-
-        showPage(targetPage);
+        showPage(
+            button.dataset.pageLink
+        );
 
     });
 
@@ -200,7 +190,9 @@ if (mobileMenu && sidebar) {
 
     mobileMenu.addEventListener("click", () => {
 
-        sidebar.classList.toggle("mobile-open");
+        sidebar.classList.toggle(
+            "mobile-open"
+        );
 
     });
 
@@ -209,7 +201,7 @@ if (mobileMenu && sidebar) {
 
 /* =========================================================
    FLOW CHART DATA
-   DEMONSTRATION / SIMULATED DATA
+   SIMULATED DATA
 ========================================================= */
 
 const flowData = {
@@ -363,13 +355,16 @@ const flowData = {
 
 
 /* =========================================================
-   CREATE FLOW CHART
+   FLOW CHART
 ========================================================= */
 
 function createFlowChart(period = "Today") {
 
     const chart =
-        document.getElementById("flow-chart");
+        document.getElementById(
+            "flow-chart"
+        );
+
 
     if (!chart) {
         return;
@@ -378,6 +373,7 @@ function createFlowChart(period = "Today") {
 
     const data =
         flowData[period];
+
 
     if (!data) {
         return;
@@ -402,6 +398,7 @@ function createFlowChart(period = "Today") {
         paddingLeft -
         paddingRight;
 
+
     const chartHeight =
         height -
         paddingTop -
@@ -409,8 +406,11 @@ function createFlowChart(period = "Today") {
 
 
     const allValues = [
+
         ...data.flow1,
+
         ...data.flow2
+
     ];
 
 
@@ -437,13 +437,11 @@ function createFlowChart(period = "Today") {
 
     function getY(value) {
 
-        const ratio =
-            value / maxValue;
-
         return (
             paddingTop +
             chartHeight -
-            ratio * chartHeight
+            (value / maxValue) *
+            chartHeight
         );
 
     }
@@ -452,13 +450,15 @@ function createFlowChart(period = "Today") {
     function createPoints(values) {
 
         return values
-            .map((value, index) => {
+            .map(
+                (value, index) => {
 
-                return (
-                    `${getX(index)},${getY(value)}`
-                );
+                    return (
+                        `${getX(index)},${getY(value)}`
+                    );
 
-            })
+                }
+            )
             .join(" ");
 
     }
@@ -467,18 +467,18 @@ function createFlowChart(period = "Today") {
     const points1 =
         createPoints(data.flow1);
 
+
     const points2 =
         createPoints(data.flow2);
 
-
-    /* Flow difference */
 
     const difference =
         data.flow1.map(
             (value, index) =>
                 Math.max(
                     0,
-                    value - data.flow2[index]
+                    value -
+                    data.flow2[index]
                 )
         );
 
@@ -487,17 +487,14 @@ function createFlowChart(period = "Today") {
         createPoints(difference);
 
 
-    /* Grid lines */
-
     let gridLines = "";
 
-    const gridCount = 5;
 
-
-    for (let i = 0; i <= gridCount; i++) {
+    for (let i = 0; i <= 5; i++) {
 
         const value =
-            (maxValue / gridCount) * i;
+            (maxValue / 5) * i;
+
 
         const y =
             getY(value);
@@ -506,42 +503,27 @@ function createFlowChart(period = "Today") {
         gridLines += `
 
             <line
-
                 x1="${paddingLeft}"
-
                 y1="${y}"
-
                 x2="${width - paddingRight}"
-
                 y2="${y}"
-
                 stroke="#dfe8ed"
-
                 stroke-width="1"
-
             />
 
             <text
-
                 x="12"
-
                 y="${y + 4}"
-
                 fill="#7b8d99"
-
                 font-size="10"
-
             >
                 ${Math.round(value)}
-
             </text>
 
         `;
 
     }
 
-
-    /* X labels */
 
     let xLabels = "";
 
@@ -552,20 +534,13 @@ function createFlowChart(period = "Today") {
             xLabels += `
 
                 <text
-
                     x="${getX(index)}"
-
                     y="${height - 13}"
-
                     text-anchor="middle"
-
                     fill="#7b8d99"
-
                     font-size="10"
-
                 >
                     ${label}
-
                 </text>
 
             `;
@@ -573,8 +548,6 @@ function createFlowChart(period = "Today") {
         }
     );
 
-
-    /* Data points */
 
     let dots = "";
 
@@ -585,15 +558,10 @@ function createFlowChart(period = "Today") {
             dots += `
 
                 <circle
-
                     cx="${getX(index)}"
-
                     cy="${getY(value)}"
-
                     r="3"
-
                     fill="#2187c9"
-
                 />
 
             `;
@@ -608,15 +576,10 @@ function createFlowChart(period = "Today") {
             dots += `
 
                 <circle
-
                     cx="${getX(index)}"
-
                     cy="${getY(value)}"
-
                     r="3"
-
                     fill="#149b9b"
-
                 />
 
             `;
@@ -624,8 +587,6 @@ function createFlowChart(period = "Today") {
         }
     );
 
-
-    /* Chart */
 
     chart.innerHTML = `
 
@@ -644,71 +605,38 @@ function createFlowChart(period = "Today") {
 
                 ${gridLines}
 
-
-                <!-- Flow 1 -->
-
                 <polyline
-
                     points="${points1}"
-
                     fill="none"
-
                     stroke="#2187c9"
-
                     stroke-width="3"
-
                     stroke-linecap="round"
-
                     stroke-linejoin="round"
-
                 />
 
-
-                <!-- Flow 2 -->
-
                 <polyline
-
                     points="${points2}"
-
                     fill="none"
-
                     stroke="#149b9b"
-
                     stroke-width="3"
-
                     stroke-linecap="round"
-
                     stroke-linejoin="round"
-
                 />
-
-
-                <!-- Difference -->
 
                 <polyline
-
                     points="${differencePoints}"
-
                     fill="none"
-
                     stroke="#c9841d"
-
                     stroke-width="2"
-
                     stroke-dasharray="5 4"
-
                     stroke-linecap="round"
-
                 />
-
 
                 ${dots}
-
 
                 ${xLabels}
 
             </svg>
-
 
             <div style="
                 position:absolute;
@@ -736,7 +664,9 @@ function createFlowChart(period = "Today") {
 ========================================================= */
 
 const timeSelector =
-    document.querySelector(".time-selector");
+    document.querySelector(
+        ".time-selector"
+    );
 
 
 if (timeSelector) {
@@ -756,6 +686,727 @@ if (timeSelector) {
 
 
 /* =========================================================
+   TANK LEVEL CHART
+========================================================= */
+
+function createTankLevelChart() {
+
+    const chart =
+        document.getElementById(
+            "tank-level-chart"
+        );
+
+
+    if (!chart) {
+        return;
+    }
+
+
+    const labels = [
+
+        "06:00",
+        "08:00",
+        "10:00",
+        "12:00",
+        "14:00",
+        "16:00",
+        "18:00",
+        "20:00"
+
+    ];
+
+
+    const levels = [
+
+        82,
+        79,
+        76,
+        73,
+        69,
+        66,
+        64,
+        61
+
+    ];
+
+
+    const width = 900;
+
+    const height = 300;
+
+    const left = 55;
+
+    const right = 25;
+
+    const top = 25;
+
+    const bottom = 40;
+
+
+    const chartWidth =
+        width -
+        left -
+        right;
+
+
+    const chartHeight =
+        height -
+        top -
+        bottom;
+
+
+    const xStep =
+        chartWidth /
+        (labels.length - 1);
+
+
+    function getX(index) {
+
+        return (
+            left +
+            index * xStep
+        );
+
+    }
+
+
+    function getY(value) {
+
+        return (
+            top +
+            chartHeight -
+            (value / 100) *
+            chartHeight
+        );
+
+    }
+
+
+    const points =
+        levels
+            .map(
+                (value, index) => {
+
+                    return (
+                        `${getX(index)},${getY(value)}`
+                    );
+
+                }
+            )
+            .join(" ");
+
+
+    let grid = "";
+
+
+    for (
+        let value = 0;
+        value <= 100;
+        value += 20
+    ) {
+
+        const y =
+            getY(value);
+
+
+        grid += `
+
+            <line
+                x1="${left}"
+                y1="${y}"
+                x2="${width - right}"
+                y2="${y}"
+                stroke="#dfe8ed"
+                stroke-width="1"
+            />
+
+            <text
+                x="10"
+                y="${y + 4}"
+                fill="#7b8d99"
+                font-size="10"
+            >
+                ${value}%
+            </text>
+
+        `;
+
+    }
+
+
+    let labelsHtml = "";
+
+
+    labels.forEach(
+        (label, index) => {
+
+            labelsHtml += `
+
+                <text
+                    x="${getX(index)}"
+                    y="${height - 13}"
+                    text-anchor="middle"
+                    fill="#7b8d99"
+                    font-size="10"
+                >
+                    ${label}
+                </text>
+
+            `;
+
+        }
+    );
+
+
+    let dots = "";
+
+
+    levels.forEach(
+        (value, index) => {
+
+            dots += `
+
+                <circle
+                    cx="${getX(index)}"
+                    cy="${getY(value)}"
+                    r="3.5"
+                    fill="#2187c9"
+                />
+
+            `;
+
+        }
+    );
+
+
+    chart.innerHTML = `
+
+        <div style="
+            position:relative;
+            width:100%;
+            height:100%;
+        ">
+
+            <svg
+                width="100%"
+                height="100%"
+                viewBox="0 0 ${width} ${height}"
+                preserveAspectRatio="none"
+            >
+
+                ${grid}
+
+                <polyline
+                    points="${points}"
+                    fill="none"
+                    stroke="#2187c9"
+                    stroke-width="3"
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
+                />
+
+                ${dots}
+
+                ${labelsHtml}
+
+            </svg>
+
+            <div style="
+                position:absolute;
+                top:10px;
+                right:10px;
+                font-size:8px;
+                color:#7d8e98;
+                background:white;
+                border:1px solid #d9e4ea;
+                padding:4px 7px;
+                border-radius:4px;
+            ">
+                SIMULATED DATA
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   WATER USAGE CHART
+========================================================= */
+
+function createWaterUsageChart() {
+
+    const chart =
+        document.getElementById(
+            "water-usage-chart"
+        );
+
+
+    if (!chart) {
+        return;
+    }
+
+
+    const labels = [
+
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+
+    ];
+
+
+    const supplied = [
+
+        21800,
+        22400,
+        23100,
+        23900,
+        24680,
+        23800,
+        24200
+
+    ];
+
+
+    const accounted = [
+
+        20500,
+        21400,
+        21900,
+        22500,
+        22940,
+        22400,
+        22800
+
+    ];
+
+
+    const maxValue = 26000;
+
+    const width = 900;
+
+    const height = 300;
+
+    const left = 60;
+
+    const right = 25;
+
+    const top = 25;
+
+    const bottom = 40;
+
+
+    const chartWidth =
+        width -
+        left -
+        right;
+
+
+    const chartHeight =
+        height -
+        top -
+        bottom;
+
+
+    const xStep =
+        chartWidth /
+        (labels.length - 1);
+
+
+    function getX(index) {
+
+        return (
+            left +
+            index * xStep
+        );
+
+    }
+
+
+    function getY(value) {
+
+        return (
+            top +
+            chartHeight -
+            (value / maxValue) *
+            chartHeight
+        );
+
+    }
+
+
+    function createPoints(values) {
+
+        return values
+            .map(
+                (value, index) => {
+
+                    return (
+                        `${getX(index)},${getY(value)}`
+                    );
+
+                }
+            )
+            .join(" ");
+
+    }
+
+
+    const suppliedPoints =
+        createPoints(supplied);
+
+
+    const accountedPoints =
+        createPoints(accounted);
+
+
+    let grid = "";
+
+
+    for (
+        let value = 0;
+        value <= maxValue;
+        value += 5000
+    ) {
+
+        const y =
+            getY(value);
+
+
+        grid += `
+
+            <line
+                x1="${left}"
+                y1="${y}"
+                x2="${width - right}"
+                y2="${y}"
+                stroke="#dfe8ed"
+                stroke-width="1"
+            />
+
+            <text
+                x="5"
+                y="${y + 4}"
+                fill="#7b8d99"
+                font-size="9"
+            >
+                ${value / 1000}k
+            </text>
+
+        `;
+
+    }
+
+
+    let labelsHtml = "";
+
+
+    labels.forEach(
+        (label, index) => {
+
+            labelsHtml += `
+
+                <text
+                    x="${getX(index)}"
+                    y="${height - 13}"
+                    text-anchor="middle"
+                    fill="#7b8d99"
+                    font-size="10"
+                >
+                    ${label}
+                </text>
+
+            `;
+
+        }
+    );
+
+
+    chart.innerHTML = `
+
+        <div style="
+            width:100%;
+            height:100%;
+        ">
+
+            <svg
+                width="100%"
+                height="100%"
+                viewBox="0 0 ${width} ${height}"
+                preserveAspectRatio="none"
+            >
+
+                ${grid}
+
+                <polyline
+                    points="${suppliedPoints}"
+                    fill="none"
+                    stroke="#2187c9"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+
+                <polyline
+                    points="${accountedPoints}"
+                    fill="none"
+                    stroke="#149b9b"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+
+                ${labelsHtml}
+
+            </svg>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   WATER LOSS CHART
+========================================================= */
+
+function createWaterLossChart() {
+
+    const chart =
+        document.getElementById(
+            "water-loss-chart"
+        );
+
+
+    if (!chart) {
+        return;
+    }
+
+
+    const labels = [
+
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+
+    ];
+
+
+    const loss = [
+
+        1300,
+        1000,
+        1200,
+        1400,
+        1740,
+        1400,
+        1400
+
+    ];
+
+
+    const maxValue = 2000;
+
+    const width = 900;
+
+    const height = 300;
+
+    const left = 55;
+
+    const right = 25;
+
+    const top = 25;
+
+    const bottom = 40;
+
+
+    const chartWidth =
+        width -
+        left -
+        right;
+
+
+    const chartHeight =
+        height -
+        top -
+        bottom;
+
+
+    const xStep =
+        chartWidth /
+        (labels.length - 1);
+
+
+    function getX(index) {
+
+        return (
+            left +
+            index * xStep
+        );
+
+    }
+
+
+    function getY(value) {
+
+        return (
+            top +
+            chartHeight -
+            (value / maxValue) *
+            chartHeight
+        );
+
+    }
+
+
+    const points =
+        loss
+            .map(
+                (value, index) => {
+
+                    return (
+                        `${getX(index)},${getY(value)}`
+                    );
+
+                }
+            )
+            .join(" ");
+
+
+    let grid = "";
+
+
+    for (
+        let value = 0;
+        value <= maxValue;
+        value += 500
+    ) {
+
+        const y =
+            getY(value);
+
+
+        grid += `
+
+            <line
+                x1="${left}"
+                y1="${y}"
+                x2="${width - right}"
+                y2="${y}"
+                stroke="#dfe8ed"
+                stroke-width="1"
+            />
+
+            <text
+                x="10"
+                y="${y + 4}"
+                fill="#7b8d99"
+                font-size="9"
+            >
+                ${value}
+            </text>
+
+        `;
+
+    }
+
+
+    let labelsHtml = "";
+
+
+    labels.forEach(
+        (label, index) => {
+
+            labelsHtml += `
+
+                <text
+                    x="${getX(index)}"
+                    y="${height - 13}"
+                    text-anchor="middle"
+                    fill="#7b8d99"
+                    font-size="10"
+                >
+                    ${label}
+                </text>
+
+            `;
+
+        }
+    );
+
+
+    let dots = "";
+
+
+    loss.forEach(
+        (value, index) => {
+
+            dots += `
+
+                <circle
+                    cx="${getX(index)}"
+                    cy="${getY(value)}"
+                    r="3.5"
+                    fill="#c9841d"
+                />
+
+            `;
+
+        }
+    );
+
+
+    chart.innerHTML = `
+
+        <div style="
+            width:100%;
+            height:100%;
+        ">
+
+            <svg
+                width="100%"
+                height="100%"
+                viewBox="0 0 ${width} ${height}"
+                preserveAspectRatio="none"
+            >
+
+                ${grid}
+
+                <polyline
+                    points="${points}"
+                    fill="none"
+                    stroke="#c9841d"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+
+                ${dots}
+
+                ${labelsHtml}
+
+            </svg>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
    DMA DATA
 ========================================================= */
 
@@ -764,25 +1415,20 @@ const dmaData = {
     "DMA-01": {
 
         name: "DMA-01",
-
         zone: "Residential Zone",
 
         inputFlow: 28.4,
-
         outputFlow: 26.9,
-
         difference: 1.5,
 
         tankLevel: 72,
 
         valve1: "OPEN",
-
         valve2: "OPEN",
 
         status: "NORMAL",
 
         latitude: "19.0760° N",
-
         longitude: "72.8777° E",
 
         risk: "LOW",
@@ -798,25 +1444,20 @@ const dmaData = {
     "DMA-02": {
 
         name: "DMA-02",
-
         zone: "Commercial Zone",
 
         inputFlow: 31.2,
-
         outputFlow: 27.8,
-
         difference: 3.4,
 
         tankLevel: 61,
 
         valve1: "OPEN",
-
         valve2: "OPEN",
 
         status: "WARNING",
 
         latitude: "19.0895° N",
-
         longitude: "72.8656° E",
 
         risk: "MEDIUM",
@@ -832,25 +1473,20 @@ const dmaData = {
     "DMA-03": {
 
         name: "DMA-03",
-
         zone: "Industrial Zone",
 
         inputFlow: 29.7,
-
         outputFlow: 19.1,
-
         difference: 10.6,
 
         tankLevel: 48,
 
         valve1: "OPEN",
-
         valve2: "OPEN",
 
         status: "ALERT",
 
         latitude: "19.1024° N",
-
         longitude: "72.8891° E",
 
         risk: "HIGH",
@@ -866,18 +1502,21 @@ const dmaData = {
 
 
 /* =========================================================
-   DMA CARD NAVIGATION
+   DMA CARD EVENTS
 ========================================================= */
 
 function attachDmaEvents() {
 
     const dmaCards =
-        document.querySelectorAll(".dma-card");
+        document.querySelectorAll(
+            ".dma-card"
+        );
 
 
     dmaCards.forEach((card) => {
 
-        card.style.cursor = "pointer";
+        card.style.cursor =
+            "pointer";
 
 
         card.addEventListener(
@@ -887,22 +1526,19 @@ function attachDmaEvents() {
                 const heading =
                     card.querySelector("h3");
 
+
                 if (!heading) {
                     return;
                 }
 
 
-                const dmaName =
-                    heading.textContent.trim();
-
-
-                openDmaDetails(dmaName);
+                openDmaDetails(
+                    heading.textContent.trim()
+                );
 
             }
         );
 
-
-        /* Keyboard support */
 
         card.addEventListener(
             "keydown",
@@ -915,12 +1551,15 @@ function attachDmaEvents() {
 
                     event.preventDefault();
 
+
                     const heading =
                         card.querySelector("h3");
+
 
                     if (!heading) {
                         return;
                     }
+
 
                     openDmaDetails(
                         heading.textContent.trim()
@@ -954,20 +1593,16 @@ function openDmaDetails(dmaName) {
     }
 
 
-    /* Open detail page */
+    showPage(
+        "dma-details"
+    );
 
-    showPage("dma-details");
-
-
-    /* Page heading */
 
     document.getElementById(
         "dma-detail-title"
     ).textContent =
         `${dma.name} Details`;
 
-
-    /* Flow */
 
     document.getElementById(
         "detail-input-flow"
@@ -987,15 +1622,11 @@ function openDmaDetails(dmaName) {
         `${dma.difference.toFixed(1)} L/min`;
 
 
-    /* Tank */
-
     document.getElementById(
         "detail-tank-level"
     ).textContent =
         `${dma.tankLevel}%`;
 
-
-    /* DMA name */
 
     document.getElementById(
         "detail-dma-name"
@@ -1003,15 +1634,11 @@ function openDmaDetails(dmaName) {
         dma.name;
 
 
-    /* Zone */
-
     document.getElementById(
         "detail-zone"
     ).textContent =
         dma.zone;
 
-
-    /* Valve */
 
     document.getElementById(
         "detail-valve-1"
@@ -1025,28 +1652,32 @@ function openDmaDetails(dmaName) {
         dma.valve2;
 
 
-    /* Status */
-
     const systemStatus =
         document.getElementById(
             "detail-system-status"
         );
 
+
     systemStatus.textContent =
         dma.status;
 
 
-    systemStatus.className = "";
+    systemStatus.className =
+        "";
 
 
-    if (dma.status === "NORMAL") {
+    if (
+        dma.status === "NORMAL"
+    ) {
 
         systemStatus.classList.add(
             "text-green"
         );
 
     }
-    else if (dma.status === "WARNING") {
+    else if (
+        dma.status === "WARNING"
+    ) {
 
         systemStatus.classList.add(
             "text-orange"
@@ -1061,8 +1692,6 @@ function openDmaDetails(dmaName) {
 
     }
 
-
-    /* Status badge */
 
     const statusBadge =
         document.getElementById(
@@ -1078,14 +1707,18 @@ function openDmaDetails(dmaName) {
         "status-badge";
 
 
-    if (dma.status === "NORMAL") {
+    if (
+        dma.status === "NORMAL"
+    ) {
 
         statusBadge.classList.add(
             "normal"
         );
 
     }
-    else if (dma.status === "WARNING") {
+    else if (
+        dma.status === "WARNING"
+    ) {
 
         statusBadge.classList.add(
             "warning"
@@ -1101,8 +1734,6 @@ function openDmaDetails(dmaName) {
     }
 
 
-    /* Risk */
-
     const risk =
         document.getElementById(
             "detail-risk"
@@ -1113,17 +1744,22 @@ function openDmaDetails(dmaName) {
         dma.risk;
 
 
-    risk.className = "";
+    risk.className =
+        "";
 
 
-    if (dma.risk === "LOW") {
+    if (
+        dma.risk === "LOW"
+    ) {
 
         risk.classList.add(
             "text-green"
         );
 
     }
-    else if (dma.risk === "MEDIUM") {
+    else if (
+        dma.risk === "MEDIUM"
+    ) {
 
         risk.classList.add(
             "text-orange"
@@ -1139,15 +1775,11 @@ function openDmaDetails(dmaName) {
     }
 
 
-    /* Recommended action */
-
     document.getElementById(
         "detail-action"
     ).textContent =
         dma.action;
 
-
-    /* Analysis */
 
     document.getElementById(
         "detail-analysis"
@@ -1155,23 +1787,23 @@ function openDmaDetails(dmaName) {
         dma.analysis;
 
 
-    /* Location */
-
-    document.getElementById(
-        "detail-location-name"
-    ).textContent =
-        `${dma.name} Location`;
+    const tankProgress =
+        document.getElementById(
+            "dma-tank-progress"
+        );
 
 
-    document.getElementById(
-        "detail-coordinates"
-    ).textContent =
-        `${dma.latitude}, ${dma.longitude}`;
+    if (tankProgress) {
+
+        tankProgress.style.width =
+            `${dma.tankLevel}%`;
+
+    }
 
 
-    /* Detail chart */
-
-    createDmaDetailChart(dma);
+    createDmaDetailChart(
+        dma
+    );
 
 }
 
@@ -1201,11 +1833,17 @@ function createDmaDetailChart(dma) {
 
 
     const inputHeight =
-        (dma.inputFlow / maxFlow) * 150;
+        (
+            dma.inputFlow /
+            maxFlow
+        ) * 150;
 
 
     const outputHeight =
-        (dma.outputFlow / maxFlow) * 150;
+        (
+            dma.outputFlow /
+            maxFlow
+        ) * 150;
 
 
     chart.innerHTML = `
@@ -1221,8 +1859,6 @@ function createDmaDetailChart(dma) {
             padding:20px 30px 35px;
         ">
 
-
-            <!-- INPUT -->
 
             <div style="
                 width:55px;
@@ -1246,8 +1882,6 @@ function createDmaDetailChart(dma) {
 
             </div>
 
-
-            <!-- OUTPUT -->
 
             <div style="
                 width:55px;
@@ -1301,28 +1935,652 @@ function createDmaDetailChart(dma) {
 
 
 /* =========================================================
-   ALERT BUTTONS
+   ALERT SOUND SYSTEM
 ========================================================= */
 
-const alertButtons =
-    document.querySelectorAll(".view-alert");
+let audioContext = null;
+
+let alertSoundEnabled =
+    localStorage.getItem(
+        "aquaguardAlertSound"
+    ) === "enabled";
 
 
-alertButtons.forEach((button) => {
+/* Create audio context */
 
-    button.addEventListener("click", () => {
+function getAudioContext() {
 
-        openDmaDetails("DMA-03");
+    if (!audioContext) {
 
-    });
+        const AudioContext =
+            window.AudioContext ||
+            window.webkitAudioContext;
 
-});
+        if (!AudioContext) {
+
+            console.warn(
+                "Web Audio API is not supported."
+            );
+
+            return null;
+
+        }
+
+        audioContext =
+            new AudioContext();
+
+    }
+
+    return audioContext;
+
+}
+
+
+/* Enable sound */
+
+async function enableAlertSound() {
+
+    const context =
+        getAudioContext();
+
+
+    if (!context) {
+        return;
+    }
+
+
+    if (
+        context.state === "suspended"
+    ) {
+
+        await context.resume();
+
+    }
+
+
+    alertSoundEnabled = true;
+
+
+    localStorage.setItem(
+        "aquaguardAlertSound",
+        "enabled"
+    );
+
+
+    /* Play a short confirmation sound */
+
+    playTone(
+        660,
+        0.12,
+        "sine",
+        0.08
+    );
+
+
+    setTimeout(() => {
+
+        playTone(
+            880,
+            0.15,
+            "sine",
+            0.08
+        );
+
+    }, 130);
+
+
+    const soundButton =
+        document.getElementById(
+            "enable-alert-sound"
+        );
+
+
+    if (soundButton) {
+
+        soundButton.textContent =
+            "🔊 Sound Enabled";
+
+        soundButton.style.background =
+            "#eaf6ef";
+
+        soundButton.style.color =
+            "#2d8a5f";
+
+        soundButton.style.borderColor =
+            "#d3e9dd";
+
+    }
+
+}
+
+
+/* Generate one tone */
+
+function playTone(
+    frequency,
+    duration,
+    type = "sine",
+    volume = 0.07
+) {
+
+    const context =
+        getAudioContext();
+
+
+    if (!context) {
+        return;
+    }
+
+
+    const oscillator =
+        context.createOscillator();
+
+
+    const gain =
+        context.createGain();
+
+
+    oscillator.type =
+        type;
+
+
+    oscillator.frequency.setValueAtTime(
+        frequency,
+        context.currentTime
+    );
+
+
+    gain.gain.setValueAtTime(
+        0.0001,
+        context.currentTime
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+        volume,
+        context.currentTime + 0.02
+    );
+
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.0001,
+        context.currentTime + duration
+    );
+
+
+    oscillator.connect(
+        gain
+    );
+
+
+    gain.connect(
+        context.destination
+    );
+
+
+    oscillator.start();
+
+
+    oscillator.stop(
+        context.currentTime +
+        duration +
+        0.03
+    );
+
+}
+
+
+/* Main alert sound */
+
+function playAlertSound() {
+
+    if (!alertSoundEnabled) {
+        return;
+    }
+
+
+    const context =
+        getAudioContext();
+
+
+    if (!context) {
+        return;
+    }
+
+
+    if (
+        context.state === "suspended"
+    ) {
+
+        context.resume();
+
+    }
+
+
+    /*
+        Three-beep warning pattern
+    */
+
+    playTone(
+        880,
+        0.22,
+        "square",
+        0.055
+    );
+
+
+    setTimeout(() => {
+
+        playTone(
+            660,
+            0.22,
+            "square",
+            0.055
+        );
+
+    }, 260);
+
+
+    setTimeout(() => {
+
+        playTone(
+            880,
+            0.35,
+            "square",
+            0.055
+        );
+
+    }, 520);
+
+}
 
 
 /* =========================================================
-   INITIALIZE APPLICATION
+   ALERT DETAILS BUTTONS
 ========================================================= */
 
-showPage("dashboard");
+const alertButtons =
+    document.querySelectorAll(
+        ".view-alert"
+    );
 
-createFlowChart("Today");
+
+alertButtons.forEach(
+    (button) => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                openDmaDetails(
+                    "DMA-03"
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   ALERT NOTIFICATION
+========================================================= */
+
+function showAlertNotification() {
+
+    const existing =
+        document.getElementById(
+            "aquaguard-alert-notification"
+        );
+
+
+    if (existing) {
+        return;
+    }
+
+
+    const alertBox =
+        document.createElement(
+            "div"
+        );
+
+
+    alertBox.id =
+        "aquaguard-alert-notification";
+
+
+    alertBox.innerHTML = `
+
+        <div style="
+            position:relative;
+            width:370px;
+            max-width:calc(100vw - 30px);
+            background:white;
+            border:1px solid #e0e6ea;
+            border-left:4px solid #c64e55;
+            border-radius:8px;
+            box-shadow:0 12px 30px rgba(25,45,60,0.16);
+            padding:16px;
+            font-family:'Segoe UI',Arial,sans-serif;
+        ">
+
+
+            <button
+                id="close-aquaguard-alert"
+                style="
+                    position:absolute;
+                    top:7px;
+                    right:10px;
+                    border:none;
+                    background:transparent;
+                    color:#7b8c97;
+                    font-size:17px;
+                    cursor:pointer;
+                "
+            >
+                ×
+            </button>
+
+
+            <div style="
+                display:flex;
+                gap:10px;
+                align-items:flex-start;
+            ">
+
+
+                <div style="
+                    width:36px;
+                    height:36px;
+                    border-radius:6px;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    background:#fdecee;
+                    color:#c64e55;
+                    font-size:17px;
+                    flex-shrink:0;
+                ">
+                    🚨
+                </div>
+
+
+                <div>
+
+                    <div style="
+                        color:#c64e55;
+                        font-size:8px;
+                        font-weight:700;
+                        letter-spacing:.7px;
+                        margin-bottom:4px;
+                    ">
+                        ACTIVE WATER LOSS ALERT
+                    </div>
+
+
+                    <h3 style="
+                        margin:0;
+                        color:#193241;
+                        font-size:13px;
+                    ">
+                        DMA-03
+                    </h3>
+
+
+                    <p style="
+                        margin:5px 0 0;
+                        color:#647887;
+                        font-size:9px;
+                        line-height:1.5;
+                    ">
+                        Flow difference:
+                        <strong>
+                            10.6 L/min
+                        </strong>
+                    </p>
+
+
+                    <p style="
+                        margin:4px 0 0;
+                        color:#647887;
+                        font-size:9px;
+                        line-height:1.5;
+                    ">
+                        Possible leakage or unauthorized
+                        diversion should be investigated.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div style="
+                margin-top:13px;
+                display:flex;
+                justify-content:flex-end;
+                gap:8px;
+                flex-wrap:wrap;
+            ">
+
+
+                <button
+                    id="enable-alert-sound"
+                    style="
+                        border:1px solid #ccdce5;
+                        background:white;
+                        color:#2187c9;
+                        padding:7px 10px;
+                        border-radius:5px;
+                        font-size:9px;
+                        font-weight:600;
+                        cursor:pointer;
+                    "
+                >
+                    🔊 Enable Sound
+                </button>
+
+
+                <button
+                    id="view-aquaguard-alert"
+                    style="
+                        border:1px solid #cbdde7;
+                        background:#2187c9;
+                        color:white;
+                        padding:7px 10px;
+                        border-radius:5px;
+                        font-size:9px;
+                        font-weight:600;
+                        cursor:pointer;
+                    "
+                >
+                    View Details →
+                </button>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    alertBox.style.position =
+        "fixed";
+
+
+    alertBox.style.top =
+        "92px";
+
+
+    alertBox.style.right =
+        "25px";
+
+
+    alertBox.style.zIndex =
+        "9999";
+
+
+    alertBox.style.animation =
+        "aquaguardAlertIn .25s ease";
+
+
+    document.body.appendChild(
+        alertBox
+    );
+
+
+    /* Play sound if already enabled */
+
+    playAlertSound();
+
+
+    /* Close */
+
+    const closeButton =
+        document.getElementById(
+            "close-aquaguard-alert"
+        );
+
+
+    closeButton.addEventListener(
+        "click",
+        () => {
+
+            alertBox.remove();
+
+        }
+    );
+
+
+    /* Enable sound */
+
+    const soundButton =
+        document.getElementById(
+            "enable-alert-sound"
+        );
+
+
+    soundButton.addEventListener(
+        "click",
+        async () => {
+
+            await enableAlertSound();
+
+        }
+    );
+
+
+    /* If sound was already enabled */
+
+    if (alertSoundEnabled) {
+
+        soundButton.textContent =
+            "🔊 Sound Enabled";
+
+        soundButton.style.background =
+            "#eaf6ef";
+
+        soundButton.style.color =
+            "#2d8a5f";
+
+        soundButton.style.borderColor =
+            "#d3e9dd";
+
+    }
+
+
+    /* View details */
+
+    const viewButton =
+        document.getElementById(
+            "view-aquaguard-alert"
+        );
+
+
+    viewButton.addEventListener(
+        "click",
+        () => {
+
+            alertBox.remove();
+
+            openDmaDetails(
+                "DMA-03"
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ALERT ANIMATION
+========================================================= */
+
+const alertAnimationStyle =
+    document.createElement(
+        "style"
+    );
+
+
+alertAnimationStyle.textContent = `
+
+    @keyframes aquaguardAlertIn {
+
+        from {
+            opacity:0;
+            transform:translateX(20px);
+        }
+
+        to {
+            opacity:1;
+            transform:translateX(0);
+        }
+
+    }
+
+`;
+
+
+document.head.appendChild(
+    alertAnimationStyle
+);
+
+
+/* =========================================================
+   INITIAL DEMO ALERT
+========================================================= */
+
+setTimeout(
+    () => {
+
+        showAlertNotification();
+
+    },
+    1200
+);
+
+
+/* =========================================================
+   INITIALIZE GRAPHS
+========================================================= */
+
+createFlowChart(
+    "Today"
+);
+
+createTankLevelChart();
+
+createWaterUsageChart();
+
+createWaterLossChart();
+
+
+/* =========================================================
+   INITIAL PAGE
+========================================================= */
+
+showPage(
+    "dashboard"
+);
