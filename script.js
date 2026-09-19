@@ -1,288 +1,937 @@
 /* =========================================================
    AQUAGUARD AI
-   COMPLETE JAVASCRIPT
-   WITH ALERT SOUND
-========================================================= */
+   Professional Water Control Center
+   Vanilla JavaScript Frontend
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+    initAquaGuard();
+});
+
+
+/* =========================================================
+   APPLICATION STATE
+   ========================================================= */
+
+const appState = {
+
+    currentPage: "dashboard",
+
+    currentDma: "DMA-01",
+
+    chartRange: "1H",
+
+    alertSoundEnabled:
+        localStorage.getItem("aquaguardAlertSound") === "enabled",
+
+    audioContext: null,
+
+    valveStates: {
+        valve1: false,
+        valve2: false,
+        relay1: false,
+        relay2: false
+    },
+
+    dmaData: {
+
+        "DMA-01": {
+            name: "DMA-01",
+            zone: "Residential Zone",
+
+            input: 28.4,
+            output: 26.9,
+            difference: 1.5,
+
+            tank: 72,
+
+            valve1: "OPEN",
+            valve2: "OPEN",
+
+            status: "NORMAL",
+            risk: "LOW",
+
+            analysis:
+                "Flow is within the expected range for this zone.",
+
+            action:
+                "Continue monitoring."
+        },
+
+        "DMA-02": {
+            name: "DMA-02",
+            zone: "Commercial Zone",
+
+            input: 31.2,
+            output: 27.8,
+            difference: 3.4,
+
+            tank: 61,
+
+            valve1: "OPEN",
+            valve2: "OPEN",
+
+            status: "WARNING",
+            risk: "MEDIUM",
+
+            analysis:
+                "A moderate flow imbalance is above the historical baseline.",
+
+            action:
+                "Inspect the flow trend and monitored pipeline."
+        },
+
+        "DMA-03": {
+            name: "DMA-03",
+            zone: "Industrial Zone",
+
+            input: 29.7,
+            output: 19.1,
+            difference: 10.6,
+
+            tank: 48,
+
+            valve1: "OPEN",
+            valve2: "OPEN",
+
+            status: "ALERT",
+            risk: "HIGH",
+
+            analysis:
+                "Significant persistent flow imbalance detected.",
+
+            action:
+                "Inspect the monitored pipeline and verify the physical flow path."
+        }
+    }
+};
 
 
 /* =========================================================
    PAGE INFORMATION
-========================================================= */
+   ========================================================= */
 
 const pageInfo = {
 
     dashboard: {
         title: "Dashboard",
-        subtitle: "Intelligent Water Monitoring & Loss Detection"
+        subtitle: "Real-time overview of the monitored water network",
+        section: "OVERVIEW"
     },
 
     monitoring: {
         title: "DMA Monitoring",
-        subtitle: "Monitor flow, tank level and valve status"
+        subtitle: "Monitor flow balance, tank levels and network conditions",
+        section: "NETWORK MONITORING"
     },
 
     prototype: {
         title: "Physical Prototype",
-        subtitle: "Live hardware monitoring and control"
+        subtitle: "Live hardware view for the AquaGuard prototype",
+        section: "HARDWARE CONTROL"
     },
 
     alerts: {
-        title: "Alerts",
-        subtitle: "Abnormal water-flow events"
+        title: "Alerts & Events",
+        subtitle: "Active abnormal conditions, warnings and resolved events",
+        section: "EVENT CENTER"
     },
 
     ai: {
         title: "AI Prediction",
-        subtitle: "Intelligent anomaly detection and prediction"
+        subtitle: "Experimental anomaly detection and historical-pattern analysis",
+        section: "INTELLIGENT ANALYSIS"
     },
 
     accounting: {
         title: "Water Accounting",
-        subtitle: "Supplied water vs accounted water"
+        subtitle: "Supplied water, accounted water and unaccounted flow trend",
+        section: "WATER BALANCE"
     },
 
     "dma-details": {
-        title: "DMA-01 Details",
-        subtitle: "Detailed monitoring information"
+        title: "DMA Details",
+        subtitle: "Detailed information for the selected monitoring area",
+        section: "ZONE DETAILS"
     },
 
     settings: {
         title: "Settings",
-        subtitle: "System configuration and preferences"
+        subtitle: "Detection thresholds, alert preferences and prototype configuration",
+        section: "SYSTEM CONFIGURATION"
     }
 
 };
 
 
 /* =========================================================
-   COMMON ELEMENTS
-========================================================= */
+   INITIALIZATION
+   ========================================================= */
 
-const navItems =
-    document.querySelectorAll(".nav-item");
+function initAquaGuard() {
 
-const pages =
-    document.querySelectorAll(".page");
+    initNavigation();
 
-const pageLinks =
-    document.querySelectorAll("[data-page-link]");
+    initMobileSidebar();
 
-const pageTitle =
-    document.getElementById("page-title");
+    initCharts();
 
-const pageSubtitle =
-    document.getElementById("page-subtitle");
+    initDmaInteractions();
 
-const sidebar =
-    document.querySelector(".sidebar");
+    initAlertInteractions();
 
-const mobileMenu =
-    document.querySelector(".mobile-menu");
+    initPrototypeControls();
+
+    initSettings();
+
+    initRefreshButton();
+
+    updateLastUpdateTime();
+
+    setInterval(updateLastUpdateTime, 10000);
+
+    syncSoundUI();
+
+    createToastContainer();
+
+    /*
+     * Demo alert is intentionally delayed so the dashboard
+     * has time to load first.
+     */
+    setTimeout(() => {
+
+        showAlertNotification({
+            title: "ACTIVE WATER LOSS ALERT",
+            dma: "DMA-03",
+            message:
+                "Significant flow imbalance detected. Possible leakage or unauthorized diversion should be investigated.",
+            value: "10.6 L/min",
+            level: "critical",
+            playSound: true
+        });
+
+    }, 1800);
+
+}
 
 
 /* =========================================================
-   PAGE NAVIGATION
-========================================================= */
+   NAVIGATION
+   ========================================================= */
+
+function initNavigation() {
+
+    document.querySelectorAll(".nav-item").forEach((button) => {
+
+        button.addEventListener("click", () => {
+
+            const page = button.dataset.page;
+
+            if (!page) {
+                return;
+            }
+
+            showPage(page);
+
+        });
+
+    });
+
+
+    document.querySelectorAll("[data-page-link]").forEach((element) => {
+
+        element.addEventListener("click", (event) => {
+
+            event.preventDefault();
+
+            const page = element.dataset.pageLink;
+
+            if (!page) {
+                return;
+            }
+
+            showPage(page);
+
+        });
+
+    });
+
+}
+
+
+/* =========================================================
+   SHOW PAGE
+   ========================================================= */
 
 function showPage(pageId) {
 
-    pages.forEach((page) => {
+    const targetPage = document.getElementById(pageId);
+
+    if (!targetPage) {
+        return;
+    }
+
+    document.querySelectorAll(".page").forEach((page) => {
 
         page.classList.remove("active-page");
 
     });
 
 
-    const selectedPage =
-        document.getElementById(pageId);
+    targetPage.classList.add("active-page");
 
 
-    if (!selectedPage) {
-        return;
-    }
+    document.querySelectorAll(".nav-item").forEach((button) => {
+
+        button.classList.toggle(
+            "active",
+            button.dataset.page === pageId
+        );
+
+    });
 
 
-    selectedPage.classList.add("active-page");
+    const info = pageInfo[pageId];
+
+    if (info) {
+
+        const pageTitle =
+            document.getElementById("page-title");
+
+        const pageSubtitle =
+            document.getElementById("page-subtitle");
+
+        const headerSection =
+            document.getElementById("header-section");
 
 
-    navItems.forEach((item) => {
-
-        item.classList.remove("active");
-
-
-        if (item.dataset.page === pageId) {
-
-            item.classList.add("active");
-
+        if (pageTitle) {
+            pageTitle.textContent = info.title;
         }
 
-    });
+        if (pageSubtitle) {
+            pageSubtitle.textContent = info.subtitle;
+        }
 
-
-    if (pageInfo[pageId]) {
-
-        pageTitle.textContent =
-            pageInfo[pageId].title;
-
-        pageSubtitle.textContent =
-            pageInfo[pageId].subtitle;
+        if (headerSection) {
+            headerSection.textContent = info.section;
+        }
 
     }
 
 
-    if (sidebar) {
-
-        sidebar.classList.remove("mobile-open");
-
-    }
-
+    appState.currentPage = pageId;
 
     window.scrollTo({
-
         top: 0,
-
         behavior: "smooth"
-
     });
+
+
+    closeMobileSidebar();
 
 }
 
 
 /* =========================================================
-   SIDEBAR NAVIGATION
-========================================================= */
+   MOBILE SIDEBAR
+   ========================================================= */
 
-navItems.forEach((item) => {
+function initMobileSidebar() {
 
-    item.addEventListener("click", () => {
+    const menuButton =
+        document.getElementById("mobile-menu");
 
-        showPage(
-            item.dataset.page
-        );
+    const sidebar =
+        document.getElementById("sidebar");
+
+    const overlay =
+        document.getElementById("sidebar-overlay");
+
+
+    if (!menuButton || !sidebar) {
+        return;
+    }
+
+
+    menuButton.addEventListener("click", () => {
+
+        sidebar.classList.toggle("mobile-open");
+
+        if (overlay) {
+            overlay.classList.toggle(
+                "visible",
+                sidebar.classList.contains("mobile-open")
+            );
+        }
 
     });
 
-});
+
+    if (overlay) {
+
+        overlay.addEventListener(
+            "click",
+            closeMobileSidebar
+        );
+
+    }
+
+}
+
+
+function closeMobileSidebar() {
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    const overlay =
+        document.getElementById("sidebar-overlay");
+
+
+    sidebar?.classList.remove("mobile-open");
+
+    overlay?.classList.remove("visible");
+
+}
 
 
 /* =========================================================
-   INTERNAL BUTTON NAVIGATION
-========================================================= */
+   LAST UPDATE TIME
+   ========================================================= */
 
-pageLinks.forEach((button) => {
+function updateLastUpdateTime() {
 
-    button.addEventListener("click", () => {
+    const element =
+        document.getElementById("last-update");
 
-        showPage(
-            button.dataset.pageLink
-        );
+    if (!element) {
+        return;
+    }
 
-    });
 
-});
+    const now = new Date();
+
+    element.textContent =
+        now.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        });
+
+}
 
 
 /* =========================================================
-   MOBILE MENU
-========================================================= */
+   CHART INITIALIZATION
+   ========================================================= */
 
-if (mobileMenu && sidebar) {
+function initCharts() {
 
-    mobileMenu.addEventListener("click", () => {
+    renderFlowChart(appState.chartRange);
 
-        sidebar.classList.toggle(
-            "mobile-open"
-        );
+    renderTankChart();
+
+    renderWaterUsageChart();
+
+    renderWaterLossChart();
+
+    renderDmaDetailChart(appState.currentDma);
+
+
+    document
+        .querySelectorAll(".chart-range")
+        .forEach((button) => {
+
+            button.addEventListener("click", () => {
+
+                const range =
+                    button.dataset.range;
+
+                if (!range) {
+                    return;
+                }
+
+
+                document
+                    .querySelectorAll(".chart-range")
+                    .forEach((item) => {
+
+                        item.classList.toggle(
+                            "active",
+                            item === button
+                        );
+
+                    });
+
+
+                appState.chartRange = range;
+
+                renderFlowChart(range);
+
+            });
+
+        });
+
+}
+
+
+/* =========================================================
+   GENERIC SVG LINE CHART
+   ========================================================= */
+
+function renderLineChart(containerId, config) {
+
+    const container =
+        document.getElementById(containerId);
+
+    if (!container) {
+        return;
+    }
+
+
+    const {
+
+        series = [],
+
+        labels = [],
+
+        min = 0,
+
+        max = 10,
+
+        height = 280,
+
+        formatter = (value) =>
+            String(value)
+
+    } = config;
+
+
+    if (!series.length) {
+        return;
+    }
+
+
+    const width = 900;
+
+    const chartTop = 24;
+    const chartBottom = height - 34;
+
+    const chartLeft = 54;
+    const chartRight = width - 18;
+
+    const plotWidth =
+        chartRight - chartLeft;
+
+    const plotHeight =
+        chartBottom - chartTop;
+
+
+    const safeRange =
+        max - min || 1;
+
+
+    function xPosition(index) {
+
+        if (labels.length <= 1) {
+            return chartLeft;
+        }
+
+        return chartLeft +
+            (index / (labels.length - 1)) *
+            plotWidth;
+
+    }
+
+
+    function yPosition(value) {
+
+        const clamped =
+            Math.max(
+                min,
+                Math.min(max, value)
+            );
+
+        return chartBottom -
+            ((clamped - min) / safeRange) *
+            plotHeight;
+
+    }
+
+
+    function makePath(values) {
+
+        return values
+            .map((value, index) => {
+
+                const x = xPosition(index);
+                const y = yPosition(value);
+
+                return `${index === 0 ? "M" : "L"} ${x.toFixed(2)} ${y.toFixed(2)}`;
+
+            })
+            .join(" ");
+
+    }
+
+
+    const rootStyle =
+        getComputedStyle(document.documentElement);
+
+
+    const colors = {
+
+        blue:
+            rootStyle.getPropertyValue("--blue").trim() ||
+            "#2187c9",
+
+        green:
+            rootStyle.getPropertyValue("--green").trim() ||
+            "#2e8b64",
+
+        orange:
+            rootStyle.getPropertyValue("--orange").trim() ||
+            "#c9851f",
+
+        line:
+            rootStyle.getPropertyValue("--line").trim() ||
+            "#dce6ec",
+
+        muted:
+            rootStyle.getPropertyValue("--muted").trim() ||
+            "#6d8090"
+
+    };
+
+
+    let svg = `
+
+        <svg
+            class="chart-svg"
+            viewBox="0 0 ${width} ${height}"
+            preserveAspectRatio="none"
+            role="img"
+            aria-label="Sensor trend chart"
+        >
+
+            <defs>
+
+                <linearGradient
+                    id="flowBlueFill"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                >
+
+                    <stop
+                        offset="0%"
+                        stop-color="${colors.blue}"
+                        stop-opacity="0.16"
+                    />
+
+                    <stop
+                        offset="100%"
+                        stop-color="${colors.blue}"
+                        stop-opacity="0"
+                    />
+
+                </linearGradient>
+
+            </defs>
+    `;
+
+
+    /*
+     * Horizontal grid
+     */
+
+    const gridCount = 5;
+
+
+    for (let i = 0; i <= gridCount; i++) {
+
+        const ratio =
+            i / gridCount;
+
+        const y =
+            chartTop +
+            ratio * plotHeight;
+
+        const value =
+            max -
+            ratio * safeRange;
+
+
+        svg += `
+
+            <line
+                x1="${chartLeft}"
+                y1="${y}"
+                x2="${chartRight}"
+                y2="${y}"
+                stroke="${colors.line}"
+                stroke-width="1"
+            />
+
+            <text
+                x="${chartLeft - 9}"
+                y="${y + 3}"
+                text-anchor="end"
+                font-size="9"
+                fill="${colors.muted}"
+            >
+                ${formatter(value)}
+            </text>
+        `;
+
+    }
+
+
+    /*
+     * Vertical labels
+     */
+
+    labels.forEach((label, index) => {
+
+        if (
+            labels.length > 8 &&
+            index % Math.ceil(labels.length / 8) !== 0
+        ) {
+            return;
+        }
+
+
+        const x = xPosition(index);
+
+
+        svg += `
+
+            <text
+                x="${x}"
+                y="${height - 9}"
+                text-anchor="middle"
+                font-size="8"
+                fill="${colors.muted}"
+            >
+                ${label}
+            </text>
+
+        `;
 
     });
+
+
+    /*
+     * Area for first series
+     */
+
+    if (series[0]?.values?.length) {
+
+        const firstPath =
+            makePath(series[0].values);
+
+
+        const areaPath =
+            `${firstPath} L ${chartRight} ${chartBottom} L ${chartLeft} ${chartBottom} Z`;
+
+
+        svg += `
+
+            <path
+                d="${areaPath}"
+                fill="url(#flowBlueFill)"
+                stroke="none"
+            />
+
+        `;
+
+    }
+
+
+    /*
+     * Lines
+     */
+
+    series.forEach((line) => {
+
+        if (!line.values?.length) {
+            return;
+        }
+
+
+        const path =
+            makePath(line.values);
+
+
+        svg += `
+
+            <path
+                d="${path}"
+                fill="none"
+                stroke="${line.color}"
+                stroke-width="${line.width || 3}"
+                stroke-linejoin="round"
+                stroke-linecap="round"
+            />
+
+        `;
+
+
+        /*
+         * Last point
+         */
+
+        const lastIndex =
+            line.values.length - 1;
+
+
+        const cx =
+            xPosition(lastIndex);
+
+        const cy =
+            yPosition(line.values[lastIndex]);
+
+
+        svg += `
+
+            <circle
+                cx="${cx}"
+                cy="${cy}"
+                r="4"
+                fill="#ffffff"
+                stroke="${line.color}"
+                stroke-width="2"
+            />
+
+        `;
+
+    });
+
+
+    svg += `</svg>`;
+
+
+    container.innerHTML = svg;
 
 }
 
 
 /* =========================================================
    FLOW CHART DATA
-   SIMULATED DATA
-========================================================= */
+   ========================================================= */
 
-const flowData = {
+const flowChartData = {
 
-    Today: {
-
+    "1H": {
         labels: [
-            "06:00",
-            "08:00",
-            "10:00",
-            "12:00",
-            "14:00",
-            "16:00",
-            "18:00",
-            "20:00"
+            "11:00",
+            "11:05",
+            "11:10",
+            "11:15",
+            "11:20",
+            "11:25",
+            "11:30",
+            "11:35"
         ],
 
-        flow1: [
-            24,
-            26,
-            28,
-            29,
-            31,
-            30,
-            28,
-            27
+        input: [
+            1.04,
+            1.12,
+            1.18,
+            1.25,
+            1.33,
+            1.29,
+            1.37,
+            1.33
         ],
 
-        flow2: [
-            23,
-            25,
-            27,
-            27,
-            29,
-            27,
-            26,
-            25
+        output: [
+            0.92,
+            0.98,
+            1.01,
+            1.05,
+            1.09,
+            1.02,
+            1.04,
+            1.00
         ]
 
     },
 
 
-    Yesterday: {
+    "6H": {
 
         labels: [
             "06:00",
+            "07:00",
             "08:00",
+            "09:00",
             "10:00",
-            "12:00",
-            "14:00",
-            "16:00",
-            "18:00",
-            "20:00"
+            "11:00"
         ],
 
-        flow1: [
-            22,
-            24,
-            25,
-            27,
-            28,
-            29,
-            27,
-            26
+        input: [
+            1.02,
+            1.17,
+            1.09,
+            1.28,
+            1.24,
+            1.33
         ],
 
-        flow2: [
-            21,
-            23,
-            24,
-            26,
-            26,
-            27,
-            25,
-            24
+        output: [
+            0.92,
+            0.99,
+            0.97,
+            1.08,
+            1.01,
+            1.00
         ]
 
     },
 
 
-    "Last 7 Days": {
+    "24H": {
+
+        labels: [
+            "00",
+            "03",
+            "06",
+            "09",
+            "12",
+            "15",
+            "18",
+            "21"
+        ],
+
+        input: [
+            0.84,
+            0.91,
+            1.04,
+            1.16,
+            1.33,
+            1.27,
+            1.10,
+            0.96
+        ],
+
+        output: [
+            0.78,
+            0.83,
+            0.91,
+            0.97,
+            1.00,
+            1.05,
+            0.97,
+            0.89
+        ]
+
+    },
+
+
+    "7D": {
 
         labels: [
             "Mon",
@@ -294,59 +943,24 @@ const flowData = {
             "Sun"
         ],
 
-        flow1: [
-            23,
-            26,
-            25,
-            29,
-            31,
-            28,
-            27
+        input: [
+            1.02,
+            1.08,
+            1.20,
+            1.17,
+            1.31,
+            1.28,
+            1.33
         ],
 
-        flow2: [
-            22,
-            24,
-            24,
-            27,
-            28,
-            26,
-            25
-        ]
-
-    },
-
-
-    "Last 30 Days": {
-
-        labels: [
-            "01",
-            "05",
-            "10",
-            "15",
-            "20",
-            "25",
-            "30"
-        ],
-
-        flow1: [
-            21,
-            24,
-            23,
-            28,
-            30,
-            27,
-            29
-        ],
-
-        flow2: [
-            20,
-            22,
-            22,
-            26,
-            27,
-            25,
-            26
+        output: [
+            0.93,
+            0.96,
+            1.01,
+            1.00,
+            1.06,
+            1.04,
+            1.00
         ]
 
     }
@@ -355,369 +969,109 @@ const flowData = {
 
 
 /* =========================================================
-   FLOW CHART
-========================================================= */
+   RENDER FLOW CHART
+   ========================================================= */
 
-function createFlowChart(period = "Today") {
-
-    const chart =
-        document.getElementById(
-            "flow-chart"
-        );
-
-
-    if (!chart) {
-        return;
-    }
-
+function renderFlowChart(range) {
 
     const data =
-        flowData[period];
-
-
-    if (!data) {
-        return;
-    }
-
-
-    const width = 900;
-
-    const height = 300;
-
-    const paddingLeft = 55;
-
-    const paddingRight = 25;
-
-    const paddingTop = 25;
-
-    const paddingBottom = 40;
-
-
-    const chartWidth =
-        width -
-        paddingLeft -
-        paddingRight;
-
-
-    const chartHeight =
-        height -
-        paddingTop -
-        paddingBottom;
-
-
-    const allValues = [
-
-        ...data.flow1,
-
-        ...data.flow2
-
-    ];
-
-
-    const maxValue =
-        Math.ceil(
-            Math.max(...allValues) / 5
-        ) * 5 + 5;
-
-
-    const xStep =
-        chartWidth /
-        (data.labels.length - 1);
-
-
-    function getX(index) {
-
-        return (
-            paddingLeft +
-            index * xStep
-        );
-
-    }
-
-
-    function getY(value) {
-
-        return (
-            paddingTop +
-            chartHeight -
-            (value / maxValue) *
-            chartHeight
-        );
-
-    }
-
-
-    function createPoints(values) {
-
-        return values
-            .map(
-                (value, index) => {
-
-                    return (
-                        `${getX(index)},${getY(value)}`
-                    );
-
-                }
-            )
-            .join(" ");
-
-    }
-
-
-    const points1 =
-        createPoints(data.flow1);
-
-
-    const points2 =
-        createPoints(data.flow2);
+        flowChartData[range] ||
+        flowChartData["1H"];
 
 
     const difference =
-        data.flow1.map(
+        data.input.map(
             (value, index) =>
-                Math.max(
-                    0,
-                    value -
-                    data.flow2[index]
+                Number(
+                    (value - data.output[index]).toFixed(2)
                 )
         );
 
 
-    const differencePoints =
-        createPoints(difference);
+    const allValues = [
+        ...data.input,
+        ...data.output,
+        ...difference
+    ];
 
 
-    let gridLines = "";
+    const minimum =
+        Math.max(
+            0,
+            Math.floor(
+                Math.min(...allValues) * 10
+            ) / 10 - 0.1
+        );
 
 
-    for (let i = 0; i <= 5; i++) {
-
-        const value =
-            (maxValue / 5) * i;
-
-
-        const y =
-            getY(value);
+    const maximum =
+        Math.ceil(
+            Math.max(...data.input) * 10
+        ) / 10 + 0.2;
 
 
-        gridLines += `
-
-            <line
-                x1="${paddingLeft}"
-                y1="${y}"
-                x2="${width - paddingRight}"
-                y2="${y}"
-                stroke="#dfe8ed"
-                stroke-width="1"
-            />
-
-            <text
-                x="12"
-                y="${y + 4}"
-                fill="#7b8d99"
-                font-size="10"
-            >
-                ${Math.round(value)}
-            </text>
-
-        `;
-
-    }
+    const rootStyle =
+        getComputedStyle(document.documentElement);
 
 
-    let xLabels = "";
+    const blue =
+        rootStyle.getPropertyValue("--blue").trim() ||
+        "#2187c9";
+
+    const green =
+        rootStyle.getPropertyValue("--green").trim() ||
+        "#2e8b64";
+
+    const orange =
+        rootStyle.getPropertyValue("--orange").trim() ||
+        "#c9851f";
 
 
-    data.labels.forEach(
-        (label, index) => {
+    renderLineChart("flow-chart", {
 
-            xLabels += `
+        labels: data.labels,
 
-                <text
-                    x="${getX(index)}"
-                    y="${height - 13}"
-                    text-anchor="middle"
-                    fill="#7b8d99"
-                    font-size="10"
-                >
-                    ${label}
-                </text>
+        min: minimum,
 
-            `;
+        max: maximum,
 
-        }
-    );
+        series: [
 
+            {
+                values: data.input,
+                color: blue,
+                width: 3
+            },
 
-    let dots = "";
+            {
+                values: data.output,
+                color: green,
+                width: 3
+            },
 
+            {
+                values: difference,
+                color: orange,
+                width: 2
+            }
 
-    data.flow1.forEach(
-        (value, index) => {
+        ],
 
-            dots += `
+        formatter: (value) =>
+            Number(value).toFixed(1)
 
-                <circle
-                    cx="${getX(index)}"
-                    cy="${getY(value)}"
-                    r="3"
-                    fill="#2187c9"
-                />
-
-            `;
-
-        }
-    );
-
-
-    data.flow2.forEach(
-        (value, index) => {
-
-            dots += `
-
-                <circle
-                    cx="${getX(index)}"
-                    cy="${getY(value)}"
-                    r="3"
-                    fill="#149b9b"
-                />
-
-            `;
-
-        }
-    );
-
-
-    chart.innerHTML = `
-
-        <div style="
-            position:relative;
-            width:100%;
-            height:100%;
-        ">
-
-            <svg
-                width="100%"
-                height="100%"
-                viewBox="0 0 ${width} ${height}"
-                preserveAspectRatio="none"
-            >
-
-                ${gridLines}
-
-                <polyline
-                    points="${points1}"
-                    fill="none"
-                    stroke="#2187c9"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                />
-
-                <polyline
-                    points="${points2}"
-                    fill="none"
-                    stroke="#149b9b"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                />
-
-                <polyline
-                    points="${differencePoints}"
-                    fill="none"
-                    stroke="#c9841d"
-                    stroke-width="2"
-                    stroke-dasharray="5 4"
-                    stroke-linecap="round"
-                />
-
-                ${dots}
-
-                ${xLabels}
-
-            </svg>
-
-            <div style="
-                position:absolute;
-                top:10px;
-                right:10px;
-                padding:4px 7px;
-                border:1px solid #d9e4ea;
-                background:white;
-                border-radius:4px;
-                color:#7d8e98;
-                font-size:8px;
-            ">
-                SIMULATED DATA
-            </div>
-
-        </div>
-
-    `;
-
-}
-
-
-/* =========================================================
-   FLOW CHART SELECTOR
-========================================================= */
-
-const timeSelector =
-    document.querySelector(
-        ".time-selector"
-    );
-
-
-if (timeSelector) {
-
-    timeSelector.addEventListener(
-        "change",
-        (event) => {
-
-            createFlowChart(
-                event.target.value
-            );
-
-        }
-    );
+    });
 
 }
 
 
 /* =========================================================
    TANK LEVEL CHART
-========================================================= */
+   ========================================================= */
 
-function createTankLevelChart() {
-
-    const chart =
-        document.getElementById(
-            "tank-level-chart"
-        );
-
-
-    if (!chart) {
-        return;
-    }
-
-
-    const labels = [
-
-        "06:00",
-        "08:00",
-        "10:00",
-        "12:00",
-        "14:00",
-        "16:00",
-        "18:00",
-        "20:00"
-
-    ];
-
+function renderTankChart() {
 
     const levels = [
-
         82,
         79,
         76,
@@ -726,244 +1080,63 @@ function createTankLevelChart() {
         66,
         64,
         61
-
     ];
 
 
-    const width = 900;
-
-    const height = 300;
-
-    const left = 55;
-
-    const right = 25;
-
-    const top = 25;
-
-    const bottom = 40;
-
-
-    const chartWidth =
-        width -
-        left -
-        right;
+    const labels = [
+        "06:00",
+        "07:00",
+        "08:00",
+        "09:00",
+        "10:00",
+        "11:00",
+        "12:00",
+        "13:00"
+    ];
 
 
-    const chartHeight =
-        height -
-        top -
-        bottom;
+    const rootStyle =
+        getComputedStyle(document.documentElement);
 
 
-    const xStep =
-        chartWidth /
-        (labels.length - 1);
+    const teal =
+        rootStyle.getPropertyValue("--teal").trim() ||
+        "#159a98";
 
 
-    function getX(index) {
+    renderLineChart("tank-level-chart", {
 
-        return (
-            left +
-            index * xStep
-        );
+        labels,
 
-    }
+        min: 40,
 
+        max: 100,
 
-    function getY(value) {
+        series: [
 
-        return (
-            top +
-            chartHeight -
-            (value / 100) *
-            chartHeight
-        );
+            {
+                values: levels,
+                color: teal,
+                width: 3
+            }
 
-    }
+        ],
 
+        formatter: (value) =>
+            `${Math.round(value)}%`
 
-    const points =
-        levels
-            .map(
-                (value, index) => {
-
-                    return (
-                        `${getX(index)},${getY(value)}`
-                    );
-
-                }
-            )
-            .join(" ");
-
-
-    let grid = "";
-
-
-    for (
-        let value = 0;
-        value <= 100;
-        value += 20
-    ) {
-
-        const y =
-            getY(value);
-
-
-        grid += `
-
-            <line
-                x1="${left}"
-                y1="${y}"
-                x2="${width - right}"
-                y2="${y}"
-                stroke="#dfe8ed"
-                stroke-width="1"
-            />
-
-            <text
-                x="10"
-                y="${y + 4}"
-                fill="#7b8d99"
-                font-size="10"
-            >
-                ${value}%
-            </text>
-
-        `;
-
-    }
-
-
-    let labelsHtml = "";
-
-
-    labels.forEach(
-        (label, index) => {
-
-            labelsHtml += `
-
-                <text
-                    x="${getX(index)}"
-                    y="${height - 13}"
-                    text-anchor="middle"
-                    fill="#7b8d99"
-                    font-size="10"
-                >
-                    ${label}
-                </text>
-
-            `;
-
-        }
-    );
-
-
-    let dots = "";
-
-
-    levels.forEach(
-        (value, index) => {
-
-            dots += `
-
-                <circle
-                    cx="${getX(index)}"
-                    cy="${getY(value)}"
-                    r="3.5"
-                    fill="#2187c9"
-                />
-
-            `;
-
-        }
-    );
-
-
-    chart.innerHTML = `
-
-        <div style="
-            position:relative;
-            width:100%;
-            height:100%;
-        ">
-
-            <svg
-                width="100%"
-                height="100%"
-                viewBox="0 0 ${width} ${height}"
-                preserveAspectRatio="none"
-            >
-
-                ${grid}
-
-                <polyline
-                    points="${points}"
-                    fill="none"
-                    stroke="#2187c9"
-                    stroke-width="3"
-                    stroke-linejoin="round"
-                    stroke-linecap="round"
-                />
-
-                ${dots}
-
-                ${labelsHtml}
-
-            </svg>
-
-            <div style="
-                position:absolute;
-                top:10px;
-                right:10px;
-                font-size:8px;
-                color:#7d8e98;
-                background:white;
-                border:1px solid #d9e4ea;
-                padding:4px 7px;
-                border-radius:4px;
-            ">
-                SIMULATED DATA
-            </div>
-
-        </div>
-
-    `;
+    });
 
 }
 
 
 /* =========================================================
    WATER USAGE CHART
-========================================================= */
+   ========================================================= */
 
-function createWaterUsageChart() {
-
-    const chart =
-        document.getElementById(
-            "water-usage-chart"
-        );
-
-
-    if (!chart) {
-        return;
-    }
-
-
-    const labels = [
-
-        "Mon",
-        "Tue",
-        "Wed",
-        "Thu",
-        "Fri",
-        "Sat",
-        "Sun"
-
-    ];
-
+function renderWaterUsageChart() {
 
     const supplied = [
-
         21800,
         22400,
         23100,
@@ -971,12 +1144,10 @@ function createWaterUsageChart() {
         24680,
         23800,
         24200
-
     ];
 
 
     const accounted = [
-
         20500,
         21400,
         21900,
@@ -984,215 +1155,10 @@ function createWaterUsageChart() {
         22940,
         22400,
         22800
-
     ];
 
 
-    const maxValue = 26000;
-
-    const width = 900;
-
-    const height = 300;
-
-    const left = 60;
-
-    const right = 25;
-
-    const top = 25;
-
-    const bottom = 40;
-
-
-    const chartWidth =
-        width -
-        left -
-        right;
-
-
-    const chartHeight =
-        height -
-        top -
-        bottom;
-
-
-    const xStep =
-        chartWidth /
-        (labels.length - 1);
-
-
-    function getX(index) {
-
-        return (
-            left +
-            index * xStep
-        );
-
-    }
-
-
-    function getY(value) {
-
-        return (
-            top +
-            chartHeight -
-            (value / maxValue) *
-            chartHeight
-        );
-
-    }
-
-
-    function createPoints(values) {
-
-        return values
-            .map(
-                (value, index) => {
-
-                    return (
-                        `${getX(index)},${getY(value)}`
-                    );
-
-                }
-            )
-            .join(" ");
-
-    }
-
-
-    const suppliedPoints =
-        createPoints(supplied);
-
-
-    const accountedPoints =
-        createPoints(accounted);
-
-
-    let grid = "";
-
-
-    for (
-        let value = 0;
-        value <= maxValue;
-        value += 5000
-    ) {
-
-        const y =
-            getY(value);
-
-
-        grid += `
-
-            <line
-                x1="${left}"
-                y1="${y}"
-                x2="${width - right}"
-                y2="${y}"
-                stroke="#dfe8ed"
-                stroke-width="1"
-            />
-
-            <text
-                x="5"
-                y="${y + 4}"
-                fill="#7b8d99"
-                font-size="9"
-            >
-                ${value / 1000}k
-            </text>
-
-        `;
-
-    }
-
-
-    let labelsHtml = "";
-
-
-    labels.forEach(
-        (label, index) => {
-
-            labelsHtml += `
-
-                <text
-                    x="${getX(index)}"
-                    y="${height - 13}"
-                    text-anchor="middle"
-                    fill="#7b8d99"
-                    font-size="10"
-                >
-                    ${label}
-                </text>
-
-            `;
-
-        }
-    );
-
-
-    chart.innerHTML = `
-
-        <div style="
-            width:100%;
-            height:100%;
-        ">
-
-            <svg
-                width="100%"
-                height="100%"
-                viewBox="0 0 ${width} ${height}"
-                preserveAspectRatio="none"
-            >
-
-                ${grid}
-
-                <polyline
-                    points="${suppliedPoints}"
-                    fill="none"
-                    stroke="#2187c9"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                />
-
-                <polyline
-                    points="${accountedPoints}"
-                    fill="none"
-                    stroke="#149b9b"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                />
-
-                ${labelsHtml}
-
-            </svg>
-
-        </div>
-
-    `;
-
-}
-
-
-/* =========================================================
-   WATER LOSS CHART
-========================================================= */
-
-function createWaterLossChart() {
-
-    const chart =
-        document.getElementById(
-            "water-loss-chart"
-        );
-
-
-    if (!chart) {
-        return;
-    }
-
-
     const labels = [
-
         "Mon",
         "Tue",
         "Wed",
@@ -1200,12 +1166,61 @@ function createWaterLossChart() {
         "Fri",
         "Sat",
         "Sun"
-
     ];
 
 
-    const loss = [
+    const rootStyle =
+        getComputedStyle(document.documentElement);
 
+
+    const blue =
+        rootStyle.getPropertyValue("--blue").trim() ||
+        "#2187c9";
+
+    const green =
+        rootStyle.getPropertyValue("--green").trim() ||
+        "#2e8b64";
+
+
+    renderLineChart("water-usage-chart", {
+
+        labels,
+
+        min: 19000,
+
+        max: 25500,
+
+        series: [
+
+            {
+                values: supplied,
+                color: blue,
+                width: 3
+            },
+
+            {
+                values: accounted,
+                color: green,
+                width: 3
+            }
+
+        ],
+
+        formatter: (value) =>
+            `${Math.round(value / 1000)}k`
+
+    });
+
+}
+
+
+/* =========================================================
+   WATER LOSS CHART
+   ========================================================= */
+
+function renderWaterLossChart() {
+
+    const loss = [
         1300,
         1000,
         1200,
@@ -1213,336 +1228,77 @@ function createWaterLossChart() {
         1740,
         1400,
         1400
-
     ];
 
 
-    const maxValue = 2000;
-
-    const width = 900;
-
-    const height = 300;
-
-    const left = 55;
-
-    const right = 25;
-
-    const top = 25;
-
-    const bottom = 40;
+    const labels = [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+    ];
 
 
-    const chartWidth =
-        width -
-        left -
-        right;
+    const rootStyle =
+        getComputedStyle(document.documentElement);
 
 
-    const chartHeight =
-        height -
-        top -
-        bottom;
+    const orange =
+        rootStyle.getPropertyValue("--orange").trim() ||
+        "#c9851f";
 
 
-    const xStep =
-        chartWidth /
-        (labels.length - 1);
+    renderLineChart("water-loss-chart", {
 
+        labels,
 
-    function getX(index) {
+        min: 0,
 
-        return (
-            left +
-            index * xStep
-        );
+        max: 2000,
 
-    }
+        series: [
 
+            {
+                values: loss,
+                color: orange,
+                width: 3
+            }
 
-    function getY(value) {
+        ],
 
-        return (
-            top +
-            chartHeight -
-            (value / maxValue) *
-            chartHeight
-        );
+        formatter: (value) =>
+            `${Math.round(value)}L`
 
-    }
-
-
-    const points =
-        loss
-            .map(
-                (value, index) => {
-
-                    return (
-                        `${getX(index)},${getY(value)}`
-                    );
-
-                }
-            )
-            .join(" ");
-
-
-    let grid = "";
-
-
-    for (
-        let value = 0;
-        value <= maxValue;
-        value += 500
-    ) {
-
-        const y =
-            getY(value);
-
-
-        grid += `
-
-            <line
-                x1="${left}"
-                y1="${y}"
-                x2="${width - right}"
-                y2="${y}"
-                stroke="#dfe8ed"
-                stroke-width="1"
-            />
-
-            <text
-                x="10"
-                y="${y + 4}"
-                fill="#7b8d99"
-                font-size="9"
-            >
-                ${value}
-            </text>
-
-        `;
-
-    }
-
-
-    let labelsHtml = "";
-
-
-    labels.forEach(
-        (label, index) => {
-
-            labelsHtml += `
-
-                <text
-                    x="${getX(index)}"
-                    y="${height - 13}"
-                    text-anchor="middle"
-                    fill="#7b8d99"
-                    font-size="10"
-                >
-                    ${label}
-                </text>
-
-            `;
-
-        }
-    );
-
-
-    let dots = "";
-
-
-    loss.forEach(
-        (value, index) => {
-
-            dots += `
-
-                <circle
-                    cx="${getX(index)}"
-                    cy="${getY(value)}"
-                    r="3.5"
-                    fill="#c9841d"
-                />
-
-            `;
-
-        }
-    );
-
-
-    chart.innerHTML = `
-
-        <div style="
-            width:100%;
-            height:100%;
-        ">
-
-            <svg
-                width="100%"
-                height="100%"
-                viewBox="0 0 ${width} ${height}"
-                preserveAspectRatio="none"
-            >
-
-                ${grid}
-
-                <polyline
-                    points="${points}"
-                    fill="none"
-                    stroke="#c9841d"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                />
-
-                ${dots}
-
-                ${labelsHtml}
-
-            </svg>
-
-        </div>
-
-    `;
+    });
 
 }
 
 
 /* =========================================================
-   DMA DATA
-========================================================= */
+   DMA INTERACTIONS
+   ========================================================= */
 
-const dmaData = {
+function initDmaInteractions() {
 
-    "DMA-01": {
+    document
+        .querySelectorAll(".dma-card")
+        .forEach((card) => {
 
-        name: "DMA-01",
-        zone: "Residential Zone",
-
-        inputFlow: 28.4,
-        outputFlow: 26.9,
-        difference: 1.5,
-
-        tankLevel: 72,
-
-        valve1: "OPEN",
-        valve2: "OPEN",
-
-        status: "NORMAL",
-
-        latitude: "19.0760° N",
-        longitude: "72.8777° E",
-
-        risk: "LOW",
-
-        action: "Continue monitoring",
-
-        analysis:
-            "Flow is currently within the expected range for this monitored area."
-
-    },
+            const dmaName =
+                card.dataset.dma;
 
 
-    "DMA-02": {
+            card.addEventListener("click", () => {
 
-        name: "DMA-02",
-        zone: "Commercial Zone",
+                openDmaDetails(dmaName);
 
-        inputFlow: 31.2,
-        outputFlow: 27.8,
-        difference: 3.4,
-
-        tankLevel: 61,
-
-        valve1: "OPEN",
-        valve2: "OPEN",
-
-        status: "WARNING",
-
-        latitude: "19.0895° N",
-        longitude: "72.8656° E",
-
-        risk: "MEDIUM",
-
-        action: "Inspect flow trend",
-
-        analysis:
-            "A moderate flow imbalance has been observed compared with the expected baseline."
-
-    },
+            });
 
 
-    "DMA-03": {
-
-        name: "DMA-03",
-        zone: "Industrial Zone",
-
-        inputFlow: 29.7,
-        outputFlow: 19.1,
-        difference: 10.6,
-
-        tankLevel: 48,
-
-        valve1: "OPEN",
-        valve2: "OPEN",
-
-        status: "ALERT",
-
-        latitude: "19.1024° N",
-        longitude: "72.8891° E",
-
-        risk: "HIGH",
-
-        action: "Inspect monitored pipeline",
-
-        analysis:
-            "A significant persistent flow imbalance has been detected. Possible leakage or unauthorized diversion should be investigated."
-
-    }
-
-};
-
-
-/* =========================================================
-   DMA CARD EVENTS
-========================================================= */
-
-function attachDmaEvents() {
-
-    const dmaCards =
-        document.querySelectorAll(
-            ".dma-card"
-        );
-
-
-    dmaCards.forEach((card) => {
-
-        card.style.cursor =
-            "pointer";
-
-
-        card.addEventListener(
-            "click",
-            () => {
-
-                const heading =
-                    card.querySelector("h3");
-
-
-                if (!heading) {
-                    return;
-                }
-
-
-                openDmaDetails(
-                    heading.textContent.trim()
-                );
-
-            }
-        );
-
-
-        card.addEventListener(
-            "keydown",
-            (event) => {
+            card.addEventListener("keydown", (event) => {
 
                 if (
                     event.key === "Enter" ||
@@ -1551,41 +1307,56 @@ function attachDmaEvents() {
 
                     event.preventDefault();
 
-
-                    const heading =
-                        card.querySelector("h3");
-
-
-                    if (!heading) {
-                        return;
-                    }
-
-
-                    openDmaDetails(
-                        heading.textContent.trim()
-                    );
+                    openDmaDetails(dmaName);
 
                 }
 
-            }
-        );
+            });
 
-    });
+        });
+
+
+    document
+        .querySelectorAll("[data-dma-detail]")
+        .forEach((button) => {
+
+            button.addEventListener("click", () => {
+
+                openDmaDetails(
+                    button.dataset.dmaDetail
+                );
+
+            });
+
+        });
+
+
+    document
+        .querySelectorAll(".view-alert")
+        .forEach((button) => {
+
+            button.addEventListener("click", () => {
+
+                const dma =
+                    button.dataset.dma;
+
+                openDmaDetails(dma);
+
+            });
+
+        });
 
 }
 
 
-attachDmaEvents();
-
-
 /* =========================================================
    OPEN DMA DETAILS
-========================================================= */
+   ========================================================= */
 
 function openDmaDetails(dmaName) {
 
     const dma =
-        dmaData[dmaName];
+        appState.dmaData[dmaName];
 
 
     if (!dma) {
@@ -1593,341 +1364,322 @@ function openDmaDetails(dmaName) {
     }
 
 
-    showPage(
-        "dma-details"
+    appState.currentDma = dmaName;
+
+
+    const page =
+        document.getElementById("dma-details");
+
+
+    if (!page) {
+        return;
+    }
+
+
+    const title =
+        document.getElementById("dma-detail-title");
+
+    const subtitle =
+        document.getElementById("dma-detail-subtitle");
+
+    const status =
+        document.getElementById("dma-detail-status");
+
+
+    if (title) {
+        title.textContent =
+            `${dma.name} Details`;
+    }
+
+
+    if (subtitle) {
+        subtitle.textContent =
+            `${dma.zone} • Detailed monitoring information`;
+    }
+
+
+    if (status) {
+
+        status.textContent =
+            dma.status;
+
+
+        status.className =
+            `status-badge ${getStatusClass(dma.status)}`;
+
+    }
+
+
+    setText(
+        "detail-input-flow",
+        `${dma.input} L/min`
+    );
+
+    setText(
+        "detail-output-flow",
+        `${dma.output} L/min`
+    );
+
+    setText(
+        "detail-difference",
+        `${dma.difference} L/min`
+    );
+
+    setText(
+        "detail-tank-level",
+        `${dma.tank}%`
+    );
+
+    setText(
+        "detail-tank-percent",
+        `${dma.tank}%`
+    );
+
+    setText(
+        "detail-dma-name",
+        dma.name
+    );
+
+    setText(
+        "detail-zone",
+        dma.zone
+    );
+
+    setText(
+        "detail-valve-1",
+        dma.valve1
+    );
+
+    setText(
+        "detail-valve-2",
+        dma.valve2
+    );
+
+    setText(
+        "detail-system-status",
+        dma.status
+    );
+
+    setText(
+        "detail-analysis",
+        dma.analysis
+    );
+
+    setText(
+        "detail-risk",
+        dma.risk
+    );
+
+    setText(
+        "detail-action",
+        dma.action
     );
 
 
-    document.getElementById(
-        "dma-detail-title"
-    ).textContent =
-        `${dma.name} Details`;
-
-
-    document.getElementById(
-        "detail-input-flow"
-    ).textContent =
-        `${dma.inputFlow.toFixed(1)} L/min`;
-
-
-    document.getElementById(
-        "detail-output-flow"
-    ).textContent =
-        `${dma.outputFlow.toFixed(1)} L/min`;
-
-
-    document.getElementById(
-        "detail-difference"
-    ).textContent =
-        `${dma.difference.toFixed(1)} L/min`;
-
-
-    document.getElementById(
-        "detail-tank-level"
-    ).textContent =
-        `${dma.tankLevel}%`;
-
-
-    document.getElementById(
-        "detail-dma-name"
-    ).textContent =
-        dma.name;
-
-
-    document.getElementById(
-        "detail-zone"
-    ).textContent =
-        dma.zone;
-
-
-    document.getElementById(
-        "detail-valve-1"
-    ).textContent =
-        dma.valve1;
-
-
-    document.getElementById(
-        "detail-valve-2"
-    ).textContent =
-        dma.valve2;
-
-
-    const systemStatus =
-        document.getElementById(
-            "detail-system-status"
-        );
-
-
-    systemStatus.textContent =
-        dma.status;
-
-
-    systemStatus.className =
-        "";
-
-
-    if (
-        dma.status === "NORMAL"
-    ) {
-
-        systemStatus.classList.add(
-            "text-green"
-        );
-
-    }
-    else if (
-        dma.status === "WARNING"
-    ) {
-
-        systemStatus.classList.add(
-            "text-orange"
-        );
-
-    }
-    else {
-
-        systemStatus.classList.add(
-            "text-red"
-        );
-
-    }
-
-
-    const statusBadge =
-        document.getElementById(
-            "dma-detail-status"
-        );
-
-
-    statusBadge.textContent =
-        dma.status;
-
-
-    statusBadge.className =
-        "status-badge";
-
-
-    if (
-        dma.status === "NORMAL"
-    ) {
-
-        statusBadge.classList.add(
-            "normal"
-        );
-
-    }
-    else if (
-        dma.status === "WARNING"
-    ) {
-
-        statusBadge.classList.add(
-            "warning"
-        );
-
-    }
-    else {
-
-        statusBadge.classList.add(
-            "danger"
-        );
-
-    }
-
-
-    const risk =
-        document.getElementById(
-            "detail-risk"
-        );
-
-
-    risk.textContent =
-        dma.risk;
-
-
-    risk.className =
-        "";
-
-
-    if (
-        dma.risk === "LOW"
-    ) {
-
-        risk.classList.add(
-            "text-green"
-        );
-
-    }
-    else if (
-        dma.risk === "MEDIUM"
-    ) {
-
-        risk.classList.add(
-            "text-orange"
-        );
-
-    }
-    else {
-
-        risk.classList.add(
-            "text-red"
-        );
-
-    }
-
-
-    document.getElementById(
-        "detail-action"
-    ).textContent =
-        dma.action;
-
-
-    document.getElementById(
-        "detail-analysis"
-    ).textContent =
-        dma.analysis;
-
-
-    const tankProgress =
+    const progress =
         document.getElementById(
             "dma-tank-progress"
         );
 
 
-    if (tankProgress) {
-
-        tankProgress.style.width =
-            `${dma.tankLevel}%`;
-
+    if (progress) {
+        progress.style.width =
+            `${dma.tank}%`;
     }
 
 
-    createDmaDetailChart(
-        dma
-    );
+    renderDmaDetailChart(dmaName);
+
+
+    showPage("dma-details");
+
+}
+
+
+/* =========================================================
+   DMA STATUS CLASS
+   ========================================================= */
+
+function getStatusClass(status) {
+
+    switch (status) {
+
+        case "NORMAL":
+            return "normal";
+
+        case "WARNING":
+            return "warning";
+
+        case "ALERT":
+        case "CRITICAL":
+            return "danger";
+
+        default:
+            return "normal";
+
+    }
 
 }
 
 
 /* =========================================================
    DMA DETAIL CHART
-========================================================= */
+   ========================================================= */
 
-function createDmaDetailChart(dma) {
+function renderDmaDetailChart(dmaName) {
 
-    const chart =
+    const dma =
+        appState.dmaData[dmaName];
+
+
+    const container =
         document.getElementById(
             "dma-detail-chart"
         );
 
 
-    if (!chart) {
+    if (!container || !dma) {
         return;
     }
 
 
-    const maxFlow =
+    const width = 760;
+    const height = 260;
+
+    const max =
         Math.max(
-            dma.inputFlow,
-            dma.outputFlow
-        );
+            dma.input,
+            dma.output
+        ) * 1.2;
 
 
     const inputHeight =
-        (
-            dma.inputFlow /
-            maxFlow
-        ) * 150;
+        175 *
+        (dma.input / max);
 
 
     const outputHeight =
-        (
-            dma.outputFlow /
-            maxFlow
-        ) * 150;
+        175 *
+        (dma.output / max);
 
 
-    chart.innerHTML = `
+    const inputX = 205;
+    const outputX = 430;
 
-        <div style="
-            position:relative;
-            width:100%;
-            height:100%;
-            display:flex;
-            align-items:flex-end;
-            justify-content:center;
-            gap:55px;
-            padding:20px 30px 35px;
-        ">
+    const baseY = 215;
 
 
-            <div style="
-                width:55px;
-                height:${inputHeight}px;
-                background:#2187c9;
-                border-radius:5px 5px 2px 2px;
-                position:relative;
-            ">
-
-                <span style="
-                    position:absolute;
-                    top:-20px;
-                    left:50%;
-                    transform:translateX(-50%);
-                    color:#607985;
-                    font-size:9px;
-                    white-space:nowrap;
-                ">
-                    ${dma.inputFlow} L/min
-                </span>
-
-            </div>
+    const rootStyle =
+        getComputedStyle(document.documentElement);
 
 
-            <div style="
-                width:55px;
-                height:${outputHeight}px;
-                background:#149b9b;
-                border-radius:5px 5px 2px 2px;
-                position:relative;
-            ">
+    const blue =
+        rootStyle.getPropertyValue("--blue").trim() ||
+        "#2187c9";
 
-                <span style="
-                    position:absolute;
-                    top:-20px;
-                    left:50%;
-                    transform:translateX(-50%);
-                    color:#607985;
-                    font-size:9px;
-                    white-space:nowrap;
-                ">
-                    ${dma.outputFlow} L/min
-                </span>
-
-            </div>
+    const green =
+        rootStyle.getPropertyValue("--green").trim() ||
+        "#2e8b64";
 
 
-            <span style="
-                position:absolute;
-                bottom:10px;
-                left:calc(50% - 82px);
-                color:#788b95;
-                font-size:8px;
-            ">
-                INPUT
-            </span>
+    container.innerHTML = `
+
+        <svg
+            class="chart-svg"
+            viewBox="0 0 ${width} ${height}"
+            aria-label="DMA flow comparison"
+        >
+
+            <line
+                x1="100"
+                y1="${baseY}"
+                x2="660"
+                y2="${baseY}"
+                stroke="#dce6ec"
+                stroke-width="1"
+            />
 
 
-            <span style="
-                position:absolute;
-                bottom:10px;
-                right:calc(50% - 91px);
-                color:#788b95;
-                font-size:8px;
-            ">
-                OUTPUT
-            </span>
+            <rect
+                x="${inputX}"
+                y="${baseY - inputHeight}"
+                width="120"
+                height="${inputHeight}"
+                rx="8"
+                fill="${blue}"
+                opacity="0.92"
+            />
 
-        </div>
+
+            <rect
+                x="${outputX}"
+                y="${baseY - outputHeight}"
+                width="120"
+                height="${outputHeight}"
+                rx="8"
+                fill="${green}"
+                opacity="0.92"
+            />
+
+
+            <text
+                x="${inputX + 60}"
+                y="${baseY - inputHeight - 12}"
+                text-anchor="middle"
+                font-size="13"
+                font-weight="800"
+                fill="#153044"
+            >
+                ${dma.input} L/min
+            </text>
+
+
+            <text
+                x="${outputX + 60}"
+                y="${baseY - outputHeight - 12}"
+                text-anchor="middle"
+                font-size="13"
+                font-weight="800"
+                fill="#153044"
+            >
+                ${dma.output} L/min
+            </text>
+
+
+            <text
+                x="${inputX + 60}"
+                y="${baseY + 25}"
+                text-anchor="middle"
+                font-size="10"
+                fill="#6d8090"
+            >
+                INPUT FLOW
+            </text>
+
+
+            <text
+                x="${outputX + 60}"
+                y="${baseY + 25}"
+                text-anchor="middle"
+                font-size="10"
+                fill="#6d8090"
+            >
+                OUTPUT FLOW
+            </text>
+
+
+            <text
+                x="380"
+                y="42"
+                text-anchor="middle"
+                font-size="11"
+                font-weight="800"
+                fill="#8b9aa5"
+            >
+                ${dma.name} FLOW BALANCE
+            </text>
+
+        </svg>
 
     `;
 
@@ -1935,132 +1687,520 @@ function createDmaDetailChart(dma) {
 
 
 /* =========================================================
-   ALERT SOUND SYSTEM
-========================================================= */
+   ALERT INTERACTIONS
+   ========================================================= */
 
-let audioContext = null;
+function initAlertInteractions() {
 
-let alertSoundEnabled =
-    localStorage.getItem(
-        "aquaguardAlertSound"
-    ) === "enabled";
+    const testButton =
+        document.getElementById(
+            "test-alert-button"
+        );
 
 
-/* Create audio context */
+    if (testButton) {
 
-function getAudioContext() {
+        testButton.addEventListener(
+            "click",
+            () => {
 
-    if (!audioContext) {
+                showAlertNotification({
 
-        const AudioContext =
-            window.AudioContext ||
-            window.webkitAudioContext;
+                    title:
+                        "TEST WATER LOSS ALERT",
 
-        if (!AudioContext) {
+                    dma:
+                        "DMA-03",
 
-            console.warn(
-                "Web Audio API is not supported."
-            );
+                    message:
+                        "This is a dashboard alert test. No real hardware action is performed.",
 
-            return null;
+                    value:
+                        "10.6 L/min",
 
-        }
+                    level:
+                        "critical",
 
-        audioContext =
-            new AudioContext();
+                    playSound:
+                        true
+
+                });
+
+            }
+        );
 
     }
 
-    return audioContext;
+
+    const notificationButton =
+        document.getElementById(
+            "notification-button"
+        );
+
+
+    if (notificationButton) {
+
+        notificationButton.addEventListener(
+            "click",
+            () => {
+
+                showPage("alerts");
+
+            }
+        );
+
+    }
 
 }
 
 
-/* Enable sound */
+/* =========================================================
+   CREATE TOAST CONTAINER
+   ========================================================= */
 
-async function enableAlertSound() {
+function createToastContainer() {
+
+    let container =
+        document.querySelector(
+            ".aquaguard-toast-container"
+        );
+
+
+    if (!container) {
+
+        container =
+            document.createElement("div");
+
+        container.className =
+            "aquaguard-toast-container";
+
+        document.body.appendChild(container);
+
+    }
+
+}
+
+
+/* =========================================================
+   SHOW ALERT NOTIFICATION
+   ========================================================= */
+
+function showAlertNotification(options = {}) {
+
+    const {
+
+        title =
+            "ACTIVE WATER LOSS ALERT",
+
+        dma =
+            "DMA-03",
+
+        message =
+            "An abnormal flow condition has been detected.",
+
+        value =
+            "10.6 L/min",
+
+        level =
+            "critical",
+
+        playSound = true
+
+    } = options;
+
+
+    const container =
+        document.querySelector(
+            ".aquaguard-toast-container"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    if (
+        playSound &&
+        appState.alertSoundEnabled
+    ) {
+
+        playAlertSound();
+
+    }
+
+
+    const toast =
+        document.createElement("div");
+
+
+    toast.className =
+        `aquaguard-toast ${level === "warning" ? "warning-toast" : ""}`;
+
+
+    const safeTitle =
+        escapeHtml(title);
+
+    const safeDma =
+        escapeHtml(dma);
+
+    const safeMessage =
+        escapeHtml(message);
+
+    const safeValue =
+        escapeHtml(value);
+
+
+    toast.innerHTML = `
+
+        <div class="aquaguard-toast-head">
+
+            <strong>
+                ${safeTitle}
+            </strong>
+
+            <button
+                class="aquaguard-toast-close"
+                aria-label="Close alert"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <p>
+            <strong>${safeDma}</strong>
+            • ${safeMessage}
+        </p>
+
+
+        <div class="aquaguard-toast-meta">
+            Flow difference: ${safeValue}
+        </div>
+
+
+        <div class="aquaguard-toast-actions">
+
+            <button
+                class="aquaguard-toast-primary toast-view"
+            >
+                View Details →
+            </button>
+
+
+            <button
+                class="aquaguard-toast-secondary toast-sound"
+            >
+                ${appState.alertSoundEnabled
+                    ? "🔊 Sound On"
+                    : "🔈 Enable Sound"}
+            </button>
+
+        </div>
+
+    `;
+
+
+    container.prepend(toast);
+
+
+    /*
+     * Close
+     */
+
+    const closeButton =
+        toast.querySelector(
+            ".aquaguard-toast-close"
+        );
+
+
+    closeButton?.addEventListener(
+        "click",
+        () => {
+
+            removeToast(toast);
+
+        }
+    );
+
+
+    /*
+     * View details
+     */
+
+    const viewButton =
+        toast.querySelector(
+            ".toast-view"
+        );
+
+
+    viewButton?.addEventListener(
+        "click",
+        () => {
+
+            openDmaDetails(dma);
+
+            removeToast(toast);
+
+        }
+    );
+
+
+    /*
+     * Sound
+     */
+
+    const soundButton =
+        toast.querySelector(
+            ".toast-sound"
+        );
+
+
+    soundButton?.addEventListener(
+        "click",
+        () => {
+
+            enableAlertSound();
+
+            soundButton.textContent =
+                "🔊 Sound On";
+
+        }
+    );
+
+
+    /*
+     * Auto remove after 12 seconds
+     */
+
+    setTimeout(() => {
+
+        if (toast.isConnected) {
+
+            removeToast(toast);
+
+        }
+
+    }, 12000);
+
+}
+
+
+/* =========================================================
+   REMOVE TOAST
+   ========================================================= */
+
+function removeToast(toast) {
+
+    if (!toast) {
+        return;
+    }
+
+
+    toast.classList.add("toast-hide");
+
+
+    setTimeout(() => {
+
+        toast.remove();
+
+    }, 180);
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+
+/* =========================================================
+   AUDIO CONTEXT
+   ========================================================= */
+
+function getAudioContext() {
+
+    if (appState.audioContext) {
+
+        return appState.audioContext;
+
+    }
+
+
+    const AudioContext =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+
+    if (!AudioContext) {
+
+        return null;
+
+    }
+
+
+    appState.audioContext =
+        new AudioContext();
+
+
+    return appState.audioContext;
+
+}
+
+
+/* =========================================================
+   ENABLE ALERT SOUND
+   ========================================================= */
+
+function enableAlertSound() {
 
     const context =
         getAudioContext();
 
 
     if (!context) {
+
+        showToastMessage(
+            "Browser audio is not supported.",
+            "warning"
+        );
+
         return;
-    }
-
-
-    if (
-        context.state === "suspended"
-    ) {
-
-        await context.resume();
 
     }
 
 
-    alertSoundEnabled = true;
+    context.resume()
+        .then(() => {
+
+            appState.alertSoundEnabled = true;
+
+            localStorage.setItem(
+                "aquaguardAlertSound",
+                "enabled"
+            );
 
 
-    localStorage.setItem(
-        "aquaguardAlertSound",
-        "enabled"
+            syncSoundUI();
+
+            /*
+             * Short confirmation tone
+             */
+
+            playTone(
+                660,
+                0.13,
+                "sine",
+                0.06
+            );
+
+
+            setTimeout(() => {
+
+                playTone(
+                    880,
+                    0.16,
+                    "sine",
+                    0.06
+                );
+
+            }, 160);
+
+        })
+        .catch(() => {
+
+            showToastMessage(
+                "Click the Enable Sound button once to allow browser audio.",
+                "warning"
+            );
+
+        });
+
+}
+
+
+/* =========================================================
+   DISABLE ALERT SOUND
+   ========================================================= */
+
+function disableAlertSound() {
+
+    appState.alertSoundEnabled = false;
+
+    localStorage.removeItem(
+        "aquaguardAlertSound"
     );
 
 
-    /* Play a short confirmation sound */
+    syncSoundUI();
 
-    playTone(
-        660,
-        0.12,
-        "sine",
-        0.08
-    );
+}
 
 
-    setTimeout(() => {
+/* =========================================================
+   SYNC SOUND UI
+   ========================================================= */
 
-        playTone(
-            880,
-            0.15,
-            "sine",
-            0.08
-        );
+function syncSoundUI() {
 
-    }, 130);
-
-
-    const soundButton =
+    const status =
         document.getElementById(
-            "enable-alert-sound"
+            "alert-sound-status"
         );
 
 
-    if (soundButton) {
+    if (status) {
 
-        soundButton.textContent =
-            "🔊 Sound Enabled";
+        status.textContent =
+            appState.alertSoundEnabled
+                ? "ON"
+                : "OFF";
 
-        soundButton.style.background =
-            "#eaf6ef";
+        status.style.color =
+            appState.alertSoundEnabled
+                ? "var(--green)"
+                : "var(--muted)";
 
-        soundButton.style.color =
-            "#2d8a5f";
+    }
 
-        soundButton.style.borderColor =
-            "#d3e9dd";
+
+    const toggle =
+        document.getElementById(
+            "sound-setting-toggle"
+        );
+
+
+    if (toggle) {
+
+        toggle.checked =
+            appState.alertSoundEnabled;
 
     }
 
 }
 
 
-/* Generate one tone */
+/* =========================================================
+   PLAY SINGLE TONE
+   ========================================================= */
 
 function playTone(
-    frequency,
-    duration,
+    frequency = 800,
+    duration = 0.2,
     type = "sine",
-    volume = 0.07
+    volume = 0.05
 ) {
 
     const context =
@@ -2080,64 +2220,49 @@ function playTone(
         context.createGain();
 
 
-    oscillator.type =
-        type;
+    oscillator.type = type;
 
-
-    oscillator.frequency.setValueAtTime(
-        frequency,
-        context.currentTime
-    );
+    oscillator.frequency.value =
+        frequency;
 
 
     gain.gain.setValueAtTime(
-        0.0001,
+        0,
         context.currentTime
     );
 
 
-    gain.gain.exponentialRampToValueAtTime(
+    gain.gain.linearRampToValueAtTime(
         volume,
-        context.currentTime + 0.02
+        context.currentTime + 0.015
     );
 
 
     gain.gain.exponentialRampToValueAtTime(
-        0.0001,
+        0.001,
         context.currentTime + duration
     );
 
 
-    oscillator.connect(
-        gain
-    );
+    oscillator.connect(gain);
 
-
-    gain.connect(
-        context.destination
-    );
+    gain.connect(context.destination);
 
 
     oscillator.start();
 
-
     oscillator.stop(
-        context.currentTime +
-        duration +
-        0.03
+        context.currentTime + duration
     );
 
 }
 
 
-/* Main alert sound */
+/* =========================================================
+   PLAY ALERT SOUND
+   ========================================================= */
 
 function playAlertSound() {
-
-    if (!alertSoundEnabled) {
-        return;
-    }
-
 
     const context =
         getAudioContext();
@@ -2148,365 +2273,515 @@ function playAlertSound() {
     }
 
 
-    if (
-        context.state === "suspended"
-    ) {
+    context.resume()
+        .then(() => {
 
-        context.resume();
-
-    }
-
-
-    /*
-        Three-beep warning pattern
-    */
-
-    playTone(
-        880,
-        0.22,
-        "square",
-        0.055
-    );
+            playTone(
+                880,
+                0.18,
+                "square",
+                0.055
+            );
 
 
-    setTimeout(() => {
+            setTimeout(() => {
 
-        playTone(
-            660,
-            0.22,
-            "square",
-            0.055
-        );
+                playTone(
+                    660,
+                    0.18,
+                    "square",
+                    0.05
+                );
 
-    }, 260);
+            }, 230);
 
 
-    setTimeout(() => {
+            setTimeout(() => {
 
-        playTone(
-            880,
-            0.35,
-            "square",
-            0.055
-        );
+                playTone(
+                    880,
+                    0.22,
+                    "square",
+                    0.055
+                );
 
-    }, 520);
+            }, 470);
+
+        });
 
 }
 
 
 /* =========================================================
-   ALERT DETAILS BUTTONS
-========================================================= */
+   GENERAL TOAST MESSAGE
+   ========================================================= */
 
-const alertButtons =
-    document.querySelectorAll(
-        ".view-alert"
+function showToastMessage(
+    message,
+    type = "normal"
+) {
+
+    const container =
+        document.querySelector(
+            ".aquaguard-toast-container"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    const toast =
+        document.createElement("div");
+
+
+    toast.className =
+        `aquaguard-toast ${
+            type === "warning"
+                ? "warning-toast"
+                : ""
+        }`;
+
+
+    toast.innerHTML = `
+
+        <div class="aquaguard-toast-head">
+
+            <strong>
+                AQUAGUARD
+            </strong>
+
+            <button
+                class="aquaguard-toast-close"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <p>
+            ${escapeHtml(message)}
+        </p>
+
+    `;
+
+
+    container.prepend(toast);
+
+
+    toast.querySelector(
+        ".aquaguard-toast-close"
+    )?.addEventListener(
+        "click",
+        () => removeToast(toast)
     );
 
 
-alertButtons.forEach(
-    (button) => {
+    setTimeout(() => {
 
-        button.addEventListener(
-            "click",
+        if (toast.isConnected) {
+
+            removeToast(toast);
+
+        }
+
+    }, 5000);
+
+}
+
+
+/* =========================================================
+   PROTOTYPE CONTROLS
+   ========================================================= */
+
+function initPrototypeControls() {
+
+    document
+        .querySelectorAll(".control-toggle")
+        .forEach((button) => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const device =
+                        button.dataset.device;
+
+
+                    if (!device) {
+                        return;
+                    }
+
+
+                    appState.valveStates[device] =
+                        !appState.valveStates[device];
+
+
+                    updateControlButton(
+                        button,
+                        device
+                    );
+
+
+                    showToastMessage(
+                        `${formatDeviceName(device)} ${
+                            appState.valveStates[device]
+                                ? "activated"
+                                : "deactivated"
+                        }. Demo control only.`,
+                        "normal"
+                    );
+
+                }
+            );
+
+        });
+
+}
+
+
+/* =========================================================
+   UPDATE CONTROL BUTTON
+   ========================================================= */
+
+function updateControlButton(
+    button,
+    device
+) {
+
+    const active =
+        appState.valveStates[device];
+
+
+    button.classList.toggle(
+        "active",
+        active
+    );
+
+
+    const valve =
+        device.includes("valve");
+
+
+    if (active) {
+
+        button.textContent =
+            valve
+                ? "OPEN"
+                : "ON";
+
+    } else {
+
+        button.textContent =
+            valve
+                ? "CLOSED"
+                : "OFF";
+
+    }
+
+}
+
+
+/* =========================================================
+   FORMAT DEVICE NAME
+   ========================================================= */
+
+function formatDeviceName(device) {
+
+    const names = {
+
+        relay1: "Relay 1",
+        relay2: "Relay 2",
+
+        valve1: "Valve 1",
+        valve2: "Valve 2"
+
+    };
+
+
+    return names[device] || device;
+
+}
+
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+
+function initSettings() {
+
+    const soundToggle =
+        document.getElementById(
+            "sound-setting-toggle"
+        );
+
+
+    if (soundToggle) {
+
+        soundToggle.checked =
+            appState.alertSoundEnabled;
+
+
+        soundToggle.addEventListener(
+            "change",
             () => {
 
-                openDmaDetails(
-                    "DMA-03"
+                if (soundToggle.checked) {
+
+                    enableAlertSound();
+
+                } else {
+
+                    disableAlertSound();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /*
+     * Critical alert setting
+     */
+
+    const criticalToggle =
+        document.getElementById(
+            "critical-alert-toggle"
+        );
+
+
+    if (criticalToggle) {
+
+        const saved =
+            localStorage.getItem(
+                "aquaguardCriticalAlerts"
+            );
+
+
+        if (saved !== null) {
+
+            criticalToggle.checked =
+                saved === "enabled";
+
+        }
+
+
+        criticalToggle.addEventListener(
+            "change",
+            () => {
+
+                localStorage.setItem(
+                    "aquaguardCriticalAlerts",
+                    criticalToggle.checked
+                        ? "enabled"
+                        : "disabled"
                 );
 
             }
         );
 
     }
-);
 
 
-/* =========================================================
-   ALERT NOTIFICATION
-========================================================= */
+    /*
+     * AI alert setting
+     */
 
-function showAlertNotification() {
-
-    const existing =
+    const aiToggle =
         document.getElementById(
-            "aquaguard-alert-notification"
+            "ai-alert-toggle"
         );
 
 
-    if (existing) {
+    if (aiToggle) {
+
+        const saved =
+            localStorage.getItem(
+                "aquaguardAiAlerts"
+            );
+
+
+        if (saved !== null) {
+
+            aiToggle.checked =
+                saved === "enabled";
+
+        }
+
+
+        aiToggle.addEventListener(
+            "change",
+            () => {
+
+                localStorage.setItem(
+                    "aquaguardAiAlerts",
+                    aiToggle.checked
+                        ? "enabled"
+                        : "disabled"
+                );
+
+            }
+        );
+
+    }
+
+
+    /*
+     * Flow threshold
+     */
+
+    const thresholdInput =
+        document.getElementById(
+            "flow-threshold"
+        );
+
+
+    if (thresholdInput) {
+
+        const saved =
+            localStorage.getItem(
+                "aquaguardFlowThreshold"
+            );
+
+
+        if (saved !== null) {
+
+            thresholdInput.value =
+                saved;
+
+        }
+
+
+        thresholdInput.addEventListener(
+            "change",
+            () => {
+
+                localStorage.setItem(
+                    "aquaguardFlowThreshold",
+                    thresholdInput.value
+                );
+
+                showToastMessage(
+                    "Flow detection threshold saved."
+                );
+
+            }
+        );
+
+    }
+
+
+    /*
+     * Persistence setting
+     */
+
+    const persistence =
+        document.getElementById(
+            "persistence-duration"
+        );
+
+
+    if (persistence) {
+
+        const saved =
+            localStorage.getItem(
+                "aquaguardPersistence"
+            );
+
+
+        if (saved) {
+
+            persistence.value =
+                saved;
+
+        }
+
+
+        persistence.addEventListener(
+            "change",
+            () => {
+
+                localStorage.setItem(
+                    "aquaguardPersistence",
+                    persistence.value
+                );
+
+                showToastMessage(
+                    "Persistence duration saved."
+                );
+
+            }
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   REFRESH DASHBOARD
+   ========================================================= */
+
+function initRefreshButton() {
+
+    const button =
+        document.getElementById(
+            "refresh-dashboard"
+        );
+
+
+    if (!button) {
         return;
     }
 
 
-    const alertBox =
-        document.createElement(
-            "div"
-        );
-
-
-    alertBox.id =
-        "aquaguard-alert-notification";
-
-
-    alertBox.innerHTML = `
-
-        <div style="
-            position:relative;
-            width:370px;
-            max-width:calc(100vw - 30px);
-            background:white;
-            border:1px solid #e0e6ea;
-            border-left:4px solid #c64e55;
-            border-radius:8px;
-            box-shadow:0 12px 30px rgba(25,45,60,0.16);
-            padding:16px;
-            font-family:'Segoe UI',Arial,sans-serif;
-        ">
-
-
-            <button
-                id="close-aquaguard-alert"
-                style="
-                    position:absolute;
-                    top:7px;
-                    right:10px;
-                    border:none;
-                    background:transparent;
-                    color:#7b8c97;
-                    font-size:17px;
-                    cursor:pointer;
-                "
-            >
-                ×
-            </button>
-
-
-            <div style="
-                display:flex;
-                gap:10px;
-                align-items:flex-start;
-            ">
-
-
-                <div style="
-                    width:36px;
-                    height:36px;
-                    border-radius:6px;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    background:#fdecee;
-                    color:#c64e55;
-                    font-size:17px;
-                    flex-shrink:0;
-                ">
-                    🚨
-                </div>
-
-
-                <div>
-
-                    <div style="
-                        color:#c64e55;
-                        font-size:8px;
-                        font-weight:700;
-                        letter-spacing:.7px;
-                        margin-bottom:4px;
-                    ">
-                        ACTIVE WATER LOSS ALERT
-                    </div>
-
-
-                    <h3 style="
-                        margin:0;
-                        color:#193241;
-                        font-size:13px;
-                    ">
-                        DMA-03
-                    </h3>
-
-
-                    <p style="
-                        margin:5px 0 0;
-                        color:#647887;
-                        font-size:9px;
-                        line-height:1.5;
-                    ">
-                        Flow difference:
-                        <strong>
-                            10.6 L/min
-                        </strong>
-                    </p>
-
-
-                    <p style="
-                        margin:4px 0 0;
-                        color:#647887;
-                        font-size:9px;
-                        line-height:1.5;
-                    ">
-                        Possible leakage or unauthorized
-                        diversion should be investigated.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div style="
-                margin-top:13px;
-                display:flex;
-                justify-content:flex-end;
-                gap:8px;
-                flex-wrap:wrap;
-            ">
-
-
-                <button
-                    id="enable-alert-sound"
-                    style="
-                        border:1px solid #ccdce5;
-                        background:white;
-                        color:#2187c9;
-                        padding:7px 10px;
-                        border-radius:5px;
-                        font-size:9px;
-                        font-weight:600;
-                        cursor:pointer;
-                    "
-                >
-                    🔊 Enable Sound
-                </button>
-
-
-                <button
-                    id="view-aquaguard-alert"
-                    style="
-                        border:1px solid #cbdde7;
-                        background:#2187c9;
-                        color:white;
-                        padding:7px 10px;
-                        border-radius:5px;
-                        font-size:9px;
-                        font-weight:600;
-                        cursor:pointer;
-                    "
-                >
-                    View Details →
-                </button>
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    alertBox.style.position =
-        "fixed";
-
-
-    alertBox.style.top =
-        "92px";
-
-
-    alertBox.style.right =
-        "25px";
-
-
-    alertBox.style.zIndex =
-        "9999";
-
-
-    alertBox.style.animation =
-        "aquaguardAlertIn .25s ease";
-
-
-    document.body.appendChild(
-        alertBox
-    );
-
-
-    /* Play sound if already enabled */
-
-    playAlertSound();
-
-
-    /* Close */
-
-    const closeButton =
-        document.getElementById(
-            "close-aquaguard-alert"
-        );
-
-
-    closeButton.addEventListener(
+    button.addEventListener(
         "click",
         () => {
 
-            alertBox.remove();
+            button.disabled = true;
 
-        }
-    );
-
-
-    /* Enable sound */
-
-    const soundButton =
-        document.getElementById(
-            "enable-alert-sound"
-        );
+            button.textContent =
+                "↻ Updating...";
 
 
-    soundButton.addEventListener(
-        "click",
-        async () => {
+            /*
+             * Re-render dashboard visuals.
+             */
 
-            await enableAlertSound();
-
-        }
-    );
-
-
-    /* If sound was already enabled */
-
-    if (alertSoundEnabled) {
-
-        soundButton.textContent =
-            "🔊 Sound Enabled";
-
-        soundButton.style.background =
-            "#eaf6ef";
-
-        soundButton.style.color =
-            "#2d8a5f";
-
-        soundButton.style.borderColor =
-            "#d3e9dd";
-
-    }
-
-
-    /* View details */
-
-    const viewButton =
-        document.getElementById(
-            "view-aquaguard-alert"
-        );
-
-
-    viewButton.addEventListener(
-        "click",
-        () => {
-
-            alertBox.remove();
-
-            openDmaDetails(
-                "DMA-03"
+            renderFlowChart(
+                appState.chartRange
             );
+
+            renderTankChart();
+
+            renderWaterUsageChart();
+
+            renderWaterLossChart();
+
+            renderDmaDetailChart(
+                appState.currentDma
+            );
+
+
+            updateLastUpdateTime();
+
+
+            setTimeout(() => {
+
+                button.disabled = false;
+
+                button.textContent =
+                    "↻ Refresh";
+
+                showToastMessage(
+                    "Dashboard data refreshed."
+                );
+
+            }, 650);
 
         }
     );
@@ -2515,72 +2790,161 @@ function showAlertNotification() {
 
 
 /* =========================================================
-   ALERT ANIMATION
-========================================================= */
+   LIVE DEMO DATA UPDATE
+   ========================================================= */
 
-const alertAnimationStyle =
-    document.createElement(
-        "style"
-    );
+function updateDemoIndicators() {
+
+    /*
+     * This intentionally does NOT overwrite
+     * the real hardware snapshot values.
+
+     * It only adds a subtle visual status update
+     * to the dashboard.
+     */
+
+    const liveElements =
+        document.querySelectorAll(
+            ".system-live"
+        );
 
 
-alertAnimationStyle.textContent = `
+    liveElements.forEach((element) => {
 
-    @keyframes aquaguardAlertIn {
+        element.classList.remove(
+            "status-refresh"
+        );
 
-        from {
-            opacity:0;
-            transform:translateX(20px);
+    });
+
+}
+
+
+/* =========================================================
+   KEYBOARD SHORTCUTS
+   ========================================================= */
+
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        /*
+         * Escape closes sidebar.
+         */
+
+        if (event.key === "Escape") {
+
+            closeMobileSidebar();
+
         }
 
-        to {
-            opacity:1;
-            transform:translateX(0);
-        }
+
+        /*
+         * Ctrl + R is intentionally left
+         * to browser refresh.
+         */
+
+    }
+);
+
+
+/* =========================================================
+   WINDOW RESIZE
+   ========================================================= */
+
+window.addEventListener(
+    "resize",
+    debounce(() => {
+
+        renderFlowChart(
+            appState.chartRange
+        );
+
+        renderTankChart();
+
+        renderWaterUsageChart();
+
+        renderWaterLossChart();
+
+        renderDmaDetailChart(
+            appState.currentDma
+        );
+
+    }, 180)
+);
+
+
+/* =========================================================
+   DEBOUNCE
+   ========================================================= */
+
+function debounce(
+    callback,
+    delay = 150
+) {
+
+    let timer;
+
+
+    return (...args) => {
+
+        clearTimeout(timer);
+
+
+        timer = setTimeout(() => {
+
+            callback(...args);
+
+        }, delay);
+
+    };
+
+}
+
+
+/* =========================================================
+   SET TEXT HELPER
+   ========================================================= */
+
+function setText(
+    elementId,
+    value
+) {
+
+    const element =
+        document.getElementById(elementId);
+
+
+    if (element) {
+
+        element.textContent =
+            value;
 
     }
 
-`;
-
-
-document.head.appendChild(
-    alertAnimationStyle
-);
+}
 
 
 /* =========================================================
-   INITIAL DEMO ALERT
-========================================================= */
+   GLOBAL ACCESS FOR TESTING
+   ========================================================= */
 
-setTimeout(
-    () => {
+window.AquaGuard = {
 
-        showAlertNotification();
+    showPage,
 
-    },
-    1200
-);
+    openDmaDetails,
 
+    showAlertNotification,
 
-/* =========================================================
-   INITIALIZE GRAPHS
-========================================================= */
+    enableAlertSound,
 
-createFlowChart(
-    "Today"
-);
+    disableAlertSound,
 
-createTankLevelChart();
+    playAlertSound,
 
-createWaterUsageChart();
+    renderFlowChart,
 
-createWaterLossChart();
+    appState
 
-
-/* =========================================================
-   INITIAL PAGE
-========================================================= */
-
-showPage(
-    "dashboard"
-);
+};
