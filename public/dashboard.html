@@ -1,0 +1,3316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AquaGuard AI - Intelligent water monitoring, leak detection and unaccounted flow analysis.">
+    <title>AquaGuard AI | Water Network Control Center</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-shell">
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="brand-block">
+                <div class="brand-mark">💧</div>
+                <div>
+                    <h1>AquaGuard</h1>
+                    <span>AI WATER SYSTEM</span>
+                </div>
+            </div>
+
+            <div class="utility-label">CONTROL CENTER</div>
+
+            <nav class="sidebar-nav" aria-label="Main navigation">
+                <button class="nav-item active" data-page="dashboard">
+                    <span class="nav-icon">▦</span><span>Dashboard</span>
+                </button>
+
+                <button class="nav-item" data-page="monitoring">
+                    <span class="nav-icon">◉</span><span>DMA Monitoring</span>
+                </button>
+
+                <button class="nav-item" data-page="prototype">
+                    <span class="nav-icon">⚙</span><span>Physical Prototype</span>
+                </button>
+
+                <button class="nav-item" data-page="alerts">
+                    <span class="nav-icon">!</span><span>Alerts</span>
+                    <span class="nav-count" id="sidebar-alert-count">3</span>
+                </button>
+
+                <button class="nav-item" data-page="ai">
+                    <span class="nav-icon">✦</span><span>AI Prediction</span>
+                    <span class="nav-mini-badge">EXP</span>
+                </button>
+
+                <button class="nav-item" data-page="accounting">
+                    <span class="nav-icon">▤</span><span>Water Accounting</span>
+                </button>
+
+                <button class="nav-item" data-page="settings">
+                    <span class="nav-icon">⚙</span><span>Settings</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="connection-card">
+                    <div class="connection-row">
+                        <span class="status-dot green-dot"></span>
+                        <div>
+                            <strong>System Online</strong>
+                            <p>Network services operational</p>
+                        </div>
+                    </div>
+
+                    <div class="connection-metrics">
+                        <span><b id="sidebar-device-count">2/2</b> ESP32</span>
+                        <span><b>2/2</b> Flow Sensors</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-footer">
+                    AquaGuard AI • Prototype v2
+                </div>
+            </div>
+        </aside>
+
+
+        <main class="main-content">
+
+            <!-- HEADER -->
+            <header class="top-header">
+
+                <div class="header-left">
+
+                    <button
+                        class="mobile-menu"
+                        id="mobile-menu"
+                        aria-label="Open navigation"
+                    >
+                        ☰
+                    </button>
+
+                    <div>
+                        <div class="eyebrow">
+                            AQUAGUARD /
+                            <span id="header-section">OVERVIEW</span>
+                        </div>
+
+                        <h2 id="page-title">
+                            Dashboard
+                        </h2>
+
+                        <p id="page-subtitle">
+                            Real-time overview of the monitored water network
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="header-right">
+
+                    <div class="header-data-status">
+                        <span class="status-dot green-dot pulse-dot"></span>
+
+                        <div>
+                            <strong>LIVE</strong>
+                            <small id="last-updated">
+                                Updated just now
+                            </small>
+                        </div>
+                    </div>
+
+
+                    <button
+                        class="header-action"
+                        id="sound-toggle"
+                        title="Toggle alert sound"
+                        aria-label="Toggle alert sound"
+                        type="button"
+                    >
+                        🔊
+                    </button>
+
+
+                    <button
+                        class="header-action notification-button"
+                        id="notification-button"
+                        title="Show latest alert"
+                        aria-label="Show latest alert"
+                        type="button"
+                    >
+                        🔔
+                        <span
+                            class="notification-count"
+                            id="notification-count"
+                        >
+                            3
+                        </span>
+                    </button>
+
+
+                    <!-- PROFILE -->
+                    <div class="profile-menu-wrap">
+
+                        <button
+                            class="profile-button"
+                            id="profile-button"
+                            type="button"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            title="Open profile menu"
+                        >
+                            <span class="profile-avatar">
+                                UG
+                            </span>
+
+                            <span class="profile-name-mini">
+                                UG
+                            </span>
+
+                            <span class="profile-chevron">
+                                ▾
+                            </span>
+                        </button>
+
+
+                        <div
+                            class="profile-dropdown"
+                            id="profile-dropdown"
+                            hidden
+                        >
+
+                            <div class="profile-dropdown-head">
+
+                                <div class="profile-dropdown-avatar">
+                                    UG
+                                </div>
+
+                                <div>
+                                    <strong id="profile-name">
+                                        Utkarsh Gupta
+                                    </strong>
+
+                                    <span id="profile-role">
+                                        System Administrator
+                                    </span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="profile-divider"></div>
+
+
+                            <button
+                                class="profile-menu-item"
+                                id="account-settings-button"
+                                type="button"
+                            >
+                                <span>⚙</span>
+                                Account Settings
+                            </button>
+
+
+                            <button
+                                class="profile-menu-item signout-menu-item"
+                                id="signout-button"
+                                type="button"
+                                onclick="window.AquaGuard && window.AquaGuard.signOut()"
+                            >
+                                <span>↪</span>
+                                Sign Out
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- STATUS STRIP -->
+            <div class="main-status-strip">
+
+                <div>
+                    <span class="status-dot green-dot"></span>
+                    <strong>System Online</strong>
+                </div>
+
+                <span>
+                    Data mode:
+                    <b class="data-chip demo">
+                        DEMO / SIMULATED
+                    </b>
+                </span>
+
+                <span>
+                    Next refresh:
+                    <b id="next-refresh">05s</b>
+                </span>
+
+            </div>
+
+
+            <!-- =========================================
+                 DASHBOARD
+            ========================================== -->
+
+            <section
+                id="dashboard"
+                class="page active-page"
+            >
+
+                <div class="page-heading dashboard-heading">
+
+                    <div>
+
+                        <div class="section-kicker">
+                            NETWORK OVERVIEW
+                        </div>
+
+                        <h2>
+                            Water Control Center
+                        </h2>
+
+                        <p>
+                            Monitor flow balance, water loss,
+                            tank status and live system health
+                            from one place.
+                        </p>
+
+                    </div>
+
+
+                    <div class="heading-actions">
+
+                        <button
+                            class="secondary-button"
+                            id="refresh-dashboard"
+                        >
+                            ↻ Refresh
+                        </button>
+
+                        <button
+                            class="primary-button"
+                            data-page-link="monitoring"
+                        >
+                            Open Monitoring →
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- KPI CARDS -->
+
+                <div class="kpi-grid">
+
+                    <article class="kpi-card blue-accent">
+
+                        <div class="kpi-top">
+                            <span class="kpi-icon">↓</span>
+                            <span class="trend-chip positive">
+                                ↑ 4.2%
+                            </span>
+                        </div>
+
+                        <span class="kpi-label">
+                            Water Input
+                        </span>
+
+                        <strong id="kpi-input">
+                            24,680 L
+                        </strong>
+
+                        <small>
+                            Today • source flow
+                        </small>
+
+                    </article>
+
+
+                    <article class="kpi-card teal-accent">
+
+                        <div class="kpi-top">
+                            <span class="kpi-icon">✓</span>
+                            <span class="trend-chip positive">
+                                93.0%
+                            </span>
+                        </div>
+
+                        <span class="kpi-label">
+                            Water Accounted
+                        </span>
+
+                        <strong id="kpi-accounted">
+                            22,940 L
+                        </strong>
+
+                        <small>
+                            Based on current accounting
+                        </small>
+
+                    </article>
+
+
+                    <article class="kpi-card orange-accent">
+
+                        <div class="kpi-top">
+                            <span class="kpi-icon">Δ</span>
+                            <span class="trend-chip warning">
+                                7.0%
+                            </span>
+                        </div>
+
+                        <span class="kpi-label">
+                            Unaccounted Water
+                        </span>
+
+                        <strong id="kpi-loss">
+                            1,740 L
+                        </strong>
+
+                        <small>
+                            Requires monitoring
+                        </small>
+
+                    </article>
+
+
+                    <article class="kpi-card red-accent">
+
+                        <div class="kpi-top">
+                            <span class="kpi-icon">!</span>
+                            <span class="trend-chip danger">
+                                3 active
+                            </span>
+                        </div>
+
+                        <span class="kpi-label">
+                            Active Alerts
+                        </span>
+
+                        <strong id="kpi-alerts">
+                            03
+                        </strong>
+
+                        <small>
+                            1 critical • 1 warning • 1 active
+                        </small>
+
+                    </article>
+
+                </div>
+
+
+                <!-- MAIN DASHBOARD GRID -->
+
+                <div class="content-grid dashboard-main-grid">
+
+                    <article class="panel chart-panel wide-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    LIVE NETWORK FLOW
+                                </div>
+
+                                <h3>
+                                    Input vs Output Flow
+                                </h3>
+
+                                <p>
+                                    Compare incoming and outgoing
+                                    flow with the measured difference.
+                                </p>
+
+                            </div>
+
+
+                            <div class="chart-toolbar">
+
+                                <div
+                                    class="segmented-control"
+                                    id="flow-range-control"
+                                >
+
+                                    <button
+                                        class="seg-btn active"
+                                        data-range="1H"
+                                    >
+                                        1H
+                                    </button>
+
+                                    <button
+                                        class="seg-btn"
+                                        data-range="6H"
+                                    >
+                                        6H
+                                    </button>
+
+                                    <button
+                                        class="seg-btn"
+                                        data-range="24H"
+                                    >
+                                        24H
+                                    </button>
+
+                                    <button
+                                        class="seg-btn"
+                                        data-range="7D"
+                                    >
+                                        7D
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="live-readout-row">
+
+                            <div>
+                                <span class="legend-dot blue"></span>
+                                Input
+                                <strong>
+                                    29.7 L/min
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span class="legend-dot teal"></span>
+                                Output
+                                <strong>
+                                    19.1 L/min
+                                </strong>
+                            </div>
+
+                            <div>
+                                <span class="legend-dot orange"></span>
+                                Difference
+                                <strong class="danger-number">
+                                    10.6 L/min
+                                </strong>
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="chart-wrap"
+                            id="flow-chart"
+                        ></div>
+
+
+                        <div class="chart-footnote">
+
+                            <span>
+                                Chart values shown here are
+                                simulated/demo values until
+                                live backend integration.
+                            </span>
+
+                            <span>
+                                Updated
+                                <b id="chart-updated">
+                                    just now
+                                </b>
+                            </span>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- AI SUMMARY -->
+
+                    <article class="panel ai-overview-card">
+
+                        <div class="panel-header compact">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    AI ANALYSIS
+                                </div>
+
+                                <h3>
+                                    Current Risk Signal
+                                </h3>
+
+                            </div>
+
+                            <span class="status-badge warning">
+                                EXPERIMENTAL
+                            </span>
+
+                        </div>
+
+
+                        <div class="risk-score-block">
+
+                            <div
+                                class="risk-ring"
+                                data-value="72"
+                            >
+                                <span>72</span>
+                                <small>/100</small>
+                            </div>
+
+
+                            <div>
+
+                                <span class="muted-label">
+                                    Observed condition
+                                </span>
+
+                                <h4>
+                                    Increasing water-loss risk
+                                </h4>
+
+                                <p>
+                                    Persistent flow imbalance is
+                                    above the current demonstration
+                                    baseline.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ai-factors">
+
+                            <div>
+                                <span>Flow difference</span>
+                                <b>10.6 L/min</b>
+                            </div>
+
+                            <div>
+                                <span>Persistence</span>
+                                <b>12 min</b>
+                            </div>
+
+                            <div>
+                                <span>Tank level</span>
+                                <b>48%</b>
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            class="primary-button full-width"
+                            data-page-link="ai"
+                        >
+                            View AI Analysis →
+                        </button>
+
+                    </article>
+
+                </div>
+
+
+                <!-- DMA + SYSTEM HEALTH -->
+
+                <div class="content-grid lower-grid">
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <div class="panel-label">
+                                    DISTRICT STATUS
+                                </div>
+
+                                <h3>
+                                    DMA Monitoring Areas
+                                </h3>
+
+                                <p>
+                                    Current flow balance across
+                                    monitored zones.
+                                </p>
+                            </div>
+
+                            <button
+                                class="secondary-button"
+                                data-page-link="monitoring"
+                            >
+                                View all
+                            </button>
+
+                        </div>
+
+
+                        <div class="dma-grid">
+
+                            <!-- DMA 01 -->
+
+                            <button
+                                class="dma-card normal-card"
+                                data-dma="DMA-01"
+                            >
+
+                                <div class="dma-head">
+
+                                    <div>
+                                        <span class="dma-code">
+                                            DMA-01
+                                        </span>
+
+                                        <h4>
+                                            Residential Zone
+                                        </h4>
+                                    </div>
+
+                                    <span class="status-badge normal">
+                                        NORMAL
+                                    </span>
+
+                                </div>
+
+
+                                <div class="dma-metrics">
+
+                                    <div>
+                                        <span>Input</span>
+                                        <b>28.4</b>
+                                        <small>L/min</small>
+                                    </div>
+
+                                    <div>
+                                        <span>Output</span>
+                                        <b>26.9</b>
+                                        <small>L/min</small>
+                                    </div>
+
+                                    <div>
+                                        <span>Δ</span>
+                                        <b>1.5</b>
+                                        <small>L/min</small>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="dma-progress">
+                                    <span style="width: 22%"></span>
+                                </div>
+
+
+                                <div class="dma-footer">
+                                    <span>Tank 72%</span>
+                                    <b>
+                                        Continue monitoring →
+                                    </b>
+                                </div>
+
+                            </button>
+
+
+                            <!-- DMA 02 -->
+
+                            <button
+                                class="dma-card warning-card"
+                                data-dma="DMA-02"
+                            >
+
+                                <div class="dma-head">
+
+                                    <div>
+                                        <span class="dma-code">
+                                            DMA-02
+                                        </span>
+
+                                        <h4>
+                                            Commercial Zone
+                                        </h4>
+                                    </div>
+
+                                    <span class="status-badge warning">
+                                        WARNING
+                                    </span>
+
+                                </div>
+
+
+                                <div class="dma-metrics">
+
+                                    <div>
+                                        <span>Input</span>
+                                        <b>31.2</b>
+                                        <small>L/min</small>
+                                    </div>
+
+                                    <div>
+                                        <span>Output</span>
+                                        <b>27.8</b>
+                                        <small>L/min</small>
+                                    </div>
+
+                                    <div>
+                                        <span>Δ</span>
+                                        <b>3.4</b>
+                                        <small>L/min</small>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="dma-progress">
+                                    <span style="width: 46%"></span>
+                                </div>
+
+
+                                <div class="dma-footer">
+                                    <span>Tank 61%</span>
+                                    <b>
+                                        Inspect trend →
+                                    </b>
+                                </div>
+
+                            </button>
+
+
+                            <!-- DMA 03 -->
+
+                            <button
+                                class="dma-card danger-card"
+                                data-dma="DMA-03"
+                            >
+
+                                <div class="dma-head">
+
+                                    <div>
+                                        <span class="dma-code">
+                                            DMA-03
+                                        </span>
+
+                                        <h4>
+                                            Industrial Zone
+                                        </h4>
+                                    </div>
+
+                                    <span class="status-badge danger">
+                                        ALERT
+                                    </span>
+
+                                </div>
+
+
+                                <div class="dma-metrics">
+
+                                    <div>
+                                        <span>Input</span>
+                                        <b>29.7</b>
+                                        <small>L/min</small>
+                                    </div>
+
+                                    <div>
+                                        <span>Output</span>
+                                        <b>19.1</b>
+                                        <small>L/min</small>
+                                    </div>
+
+                                    <div>
+                                        <span>Δ</span>
+                                        <b>10.6</b>
+                                        <small>L/min</small>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="dma-progress">
+                                    <span style="width: 88%"></span>
+                                </div>
+
+
+                                <div class="dma-footer">
+                                    <span>Tank 48%</span>
+                                    <b>
+                                        Investigate →
+                                    </b>
+                                </div>
+
+                            </button>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- SYSTEM HEALTH -->
+
+                    <article class="panel system-health-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <div class="panel-label">
+                                    HARDWARE
+                                </div>
+
+                                <h3>
+                                    System Health
+                                </h3>
+
+                                <p>
+                                    Connected device status.
+                                </p>
+                            </div>
+
+                            <span class="health-score">
+                                94%
+                            </span>
+
+                        </div>
+
+
+                        <div class="health-meter">
+                            <span style="width:94%"></span>
+                        </div>
+
+
+                        <div class="health-list">
+
+                            <div>
+                                <span>
+                                    <i class="status-dot green-dot"></i>
+                                    ESP32 #1
+                                </span>
+                                <b>Connected</b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    <i class="status-dot green-dot"></i>
+                                    ESP32 #2
+                                </span>
+                                <b>Connected</b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    <i class="status-dot green-dot"></i>
+                                    Flow Sensor 1
+                                </span>
+                                <b>Healthy</b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    <i class="status-dot green-dot"></i>
+                                    Flow Sensor 2
+                                </span>
+                                <b>Healthy</b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    <i class="status-dot orange-dot"></i>
+                                    Ultrasonic
+                                </span>
+                                <b>Pending</b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    <i class="status-dot green-dot"></i>
+                                    Valve Control
+                                </span>
+                                <b>Ready</b>
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            class="secondary-button full-width"
+                            data-page-link="prototype"
+                        >
+                            Open Hardware Panel
+                        </button>
+
+                    </article>
+
+                </div>
+
+
+                <!-- HARDWARE BANNER -->
+
+                <article class="panel hardware-banner">
+
+                    <div class="hardware-banner-copy">
+
+                        <span class="hardware-badge">
+                            REAL HARDWARE
+                        </span>
+
+                        <h3>
+                            Physical prototype is ready
+                            for live integration
+                        </h3>
+
+                        <p>
+                            Current prototype readings are
+                            kept separate from the simulated
+                            DMA dashboard values so the demo
+                            remains transparent.
+                        </p>
+
+                    </div>
+
+
+                    <div class="hardware-live-values">
+
+                        <div>
+                            <span>Flow Sensor 1</span>
+                            <strong>
+                                1.33 L/min
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Flow Sensor 2</span>
+                            <strong>
+                                0.00 L/min
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Valves</span>
+                            <strong>
+                                CLOSED / CLOSED
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- =========================================
+                 DMA MONITORING
+            ========================================== -->
+
+            <section
+                id="monitoring"
+                class="page"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <div class="section-kicker">
+                            NETWORK OPERATIONS
+                        </div>
+
+                        <h2>
+                            DMA Monitoring
+                        </h2>
+
+                        <p>
+                            Review monitored districts,
+                            flow balance and operational
+                            conditions without a map dependency.
+                        </p>
+
+                    </div>
+
+
+                    <div class="heading-actions">
+
+                        <button
+                            class="secondary-button"
+                            id="monitoring-refresh"
+                        >
+                            ↻ Refresh
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="mini-kpi-grid">
+
+                    <div class="mini-kpi">
+                        <span>Total DMAs</span>
+                        <strong>03</strong>
+                        <small>Monitored zones</small>
+                    </div>
+
+                    <div class="mini-kpi">
+                        <span>Normal</span>
+                        <strong class="text-green">01</strong>
+                        <small>Within baseline</small>
+                    </div>
+
+                    <div class="mini-kpi">
+                        <span>Warning</span>
+                        <strong class="text-orange">01</strong>
+                        <small>Needs review</small>
+                    </div>
+
+                    <div class="mini-kpi">
+                        <span>Alert</span>
+                        <strong class="text-red">01</strong>
+                        <small>Needs investigation</small>
+                    </div>
+
+                </div>
+
+
+                <div class="content-grid monitoring-grid">
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <div class="panel-label">
+                                    NETWORK BALANCE
+                                </div>
+
+                                <h3>
+                                    Monitored Flow Comparison
+                                </h3>
+
+                                <p>
+                                    Input and output values
+                                    for each DMA.
+                                </p>
+                            </div>
+
+                            <span class="data-chip demo">
+                                DEMO DATA
+                            </span>
+
+                        </div>
+
+
+                        <div class="monitor-table-wrap">
+
+                            <table class="monitor-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>DMA</th>
+                                        <th>Zone</th>
+                                        <th>Input</th>
+                                        <th>Output</th>
+                                        <th>Difference</th>
+                                        <th>Tank</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+
+
+                                <tbody>
+
+                                    <tr>
+                                        <td>
+                                            <b>DMA-01</b>
+                                        </td>
+
+                                        <td>
+                                            Residential
+                                        </td>
+
+                                        <td>
+                                            28.4 L/min
+                                        </td>
+
+                                        <td>
+                                            26.9 L/min
+                                        </td>
+
+                                        <td>
+                                            1.5 L/min
+                                        </td>
+
+                                        <td>
+                                            72%
+                                        </td>
+
+                                        <td>
+                                            <span class="status-badge normal">
+                                                NORMAL
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <button
+                                                class="table-action"
+                                                data-dma="DMA-01"
+                                            >
+                                                Details
+                                            </button>
+                                        </td>
+                                    </tr>
+
+
+                                    <tr>
+                                        <td>
+                                            <b>DMA-02</b>
+                                        </td>
+
+                                        <td>
+                                            Commercial
+                                        </td>
+
+                                        <td>
+                                            31.2 L/min
+                                        </td>
+
+                                        <td>
+                                            27.8 L/min
+                                        </td>
+
+                                        <td>
+                                            3.4 L/min
+                                        </td>
+
+                                        <td>
+                                            61%
+                                        </td>
+
+                                        <td>
+                                            <span class="status-badge warning">
+                                                WARNING
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <button
+                                                class="table-action"
+                                                data-dma="DMA-02"
+                                            >
+                                                Details
+                                            </button>
+                                        </td>
+                                    </tr>
+
+
+                                    <tr>
+                                        <td>
+                                            <b>DMA-03</b>
+                                        </td>
+
+                                        <td>
+                                            Industrial
+                                        </td>
+
+                                        <td>
+                                            29.7 L/min
+                                        </td>
+
+                                        <td>
+                                            19.1 L/min
+                                        </td>
+
+                                        <td class="danger-number">
+                                            10.6 L/min
+                                        </td>
+
+                                        <td>
+                                            48%
+                                        </td>
+
+                                        <td>
+                                            <span class="status-badge danger">
+                                                ALERT
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <button
+                                                class="table-action"
+                                                data-dma="DMA-03"
+                                            >
+                                                Details
+                                            </button>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+                                <div class="panel-label">
+                                    TANK LEVEL
+                                </div>
+
+                                <h3>
+                                    Level Trend
+                                </h3>
+
+                                <p>
+                                    Illustrative tank level history.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="chart-wrap compact-chart"
+                            id="tank-level-chart"
+                        ></div>
+
+
+                        <div class="chart-caption-grid">
+
+                            <span>
+                                <b>Latest</b>
+                                <strong>61%</strong>
+                            </span>
+
+                            <span>
+                                <b>Minimum</b>
+                                <strong>48%</strong>
+                            </span>
+
+                            <span>
+                                <b>Trend</b>
+                                <strong class="text-orange">
+                                    ↓ 5%
+                                </strong>
+                            </span>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <article class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <div class="panel-label">
+                                OPERATIONS
+                            </div>
+
+                            <h3>
+                                DMA Priority Queue
+                            </h3>
+
+                            <p>
+                                Operational context for the
+                                current demo data.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="priority-list">
+
+                        <div class="priority-row">
+
+                            <span class="priority-marker red"></span>
+
+                            <div>
+                                <b>DMA-03</b>
+
+                                <p>
+                                    Significant persistent flow
+                                    imbalance; inspect monitored
+                                    pipeline section.
+                                </p>
+                            </div>
+
+                            <strong>
+                                HIGH
+                            </strong>
+
+                            <button
+                                class="table-action"
+                                data-dma="DMA-03"
+                            >
+                                Open
+                            </button>
+
+                        </div>
+
+
+                        <div class="priority-row">
+
+                            <span class="priority-marker orange"></span>
+
+                            <div>
+                                <b>DMA-02</b>
+
+                                <p>
+                                    Flow difference above current
+                                    baseline; continue observation
+                                    and inspect trend.
+                                </p>
+                            </div>
+
+                            <strong>
+                                MEDIUM
+                            </strong>
+
+                            <button
+                                class="table-action"
+                                data-dma="DMA-02"
+                            >
+                                Open
+                            </button>
+
+                        </div>
+
+
+                        <div class="priority-row">
+
+                            <span class="priority-marker green"></span>
+
+                            <div>
+                                <b>DMA-01</b>
+
+                                <p>
+                                    Flow balance currently within
+                                    expected demonstration range.
+                                </p>
+                            </div>
+
+                            <strong>
+                                LOW
+                            </strong>
+
+                            <button
+                                class="table-action"
+                                data-dma="DMA-01"
+                            >
+                                Open
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- =========================================
+                 PHYSICAL PROTOTYPE
+            ========================================== -->
+
+            <section
+                id="prototype"
+                class="page"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <div class="section-kicker">
+                            LAB HARDWARE
+                        </div>
+
+                        <h2>
+                            Physical Prototype
+                        </h2>
+
+                        <p>
+                            Live-ready view of the
+                            two-ESP32 proof-of-concept system.
+                        </p>
+
+                    </div>
+
+                    <span class="data-chip real">
+                        REAL HARDWARE
+                    </span>
+
+                </div>
+
+
+                <div class="prototype-top-grid">
+
+                    <article class="panel prototype-controller">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    PRIMARY CONTROLLER
+                                </div>
+
+                                <h3>
+                                    ESP32 #1
+                                </h3>
+
+                                <p>
+                                    Source-side controller
+                                </p>
+
+                            </div>
+
+                            <span class="status-badge normal">
+                                CONNECTED
+                            </span>
+
+                        </div>
+
+
+                        <div class="device-visual">
+
+                            <div class="device-chip">
+                                ESP32
+                            </div>
+
+                            <div class="device-lines">
+
+                                <span>
+                                    Flow Sensor 1
+                                    <b>1.33 L/min</b>
+                                </span>
+
+                                <span>
+                                    Relay 1
+                                    <b>ON</b>
+                                </span>
+
+                                <span>
+                                    Valve 1
+                                    <b>OPEN</b>
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="device-footer">
+
+                            <span>Wi-Fi</span>
+                            <b>Connected</b>
+
+                            <span>Role</span>
+                            <b>Primary</b>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="panel prototype-controller">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    DESTINATION CONTROLLER
+                                </div>
+
+                                <h3>
+                                    ESP32 #2
+                                </h3>
+
+                                <p>
+                                    Destination-side controller
+                                </p>
+
+                            </div>
+
+                            <span class="status-badge normal">
+                                CONNECTED
+                            </span>
+
+                        </div>
+
+
+                        <div class="device-visual">
+
+                            <div class="device-chip">
+                                ESP32
+                            </div>
+
+                            <div class="device-lines">
+
+                                <span>
+                                    Flow Sensor 2
+                                    <b>0.00 L/min</b>
+                                </span>
+
+                                <span>
+                                    Relay 2
+                                    <b>ON</b>
+                                </span>
+
+                                <span>
+                                    Valve 2
+                                    <b>OPEN</b>
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="device-footer">
+
+                            <span>Ultrasonic</span>
+                            <b class="text-orange">
+                                Pending
+                            </b>
+
+                            <span>Role</span>
+                            <b>Destination</b>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <article class="panel flow-pipeline-panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <div class="panel-label">
+                                SEQUENTIAL OPERATION
+                            </div>
+
+                            <h3>
+                                Prototype Flow Sequence
+                            </h3>
+
+                            <p>
+                                Current concept for safe
+                                source-to-destination operation.
+                            </p>
+
+                        </div>
+
+                        <span class="status-badge normal">
+                            READY
+                        </span>
+
+                    </div>
+
+
+                    <div class="pipeline">
+
+                        <div class="pipe-node active">
+                            <span>01</span>
+                            <b>Source</b>
+                            <small>Tank 1</small>
+                        </div>
+
+                        <div class="pipe-line active"></div>
+
+                        <div class="pipe-node active">
+                            <span>02</span>
+                            <b>Flow Sensor 1</b>
+                            <small>1.33 L/min</small>
+                        </div>
+
+                        <div class="pipe-line active"></div>
+
+                        <div class="pipe-node active">
+                            <span>03</span>
+                            <b>Valve 1</b>
+                            <small>OPEN</small>
+                        </div>
+
+                        <div class="pipe-line"></div>
+
+                        <div class="pipe-node">
+                            <span>04</span>
+                            <b>Flow Sensor 2</b>
+                            <small>0.00 L/min</small>
+                        </div>
+
+                        <div class="pipe-line"></div>
+
+                        <div class="pipe-node">
+                            <span>05</span>
+                            <b>Valve 2</b>
+                            <small>OPEN</small>
+                        </div>
+
+                        <div class="pipe-line"></div>
+
+                        <div class="pipe-node">
+                            <span>06</span>
+                            <b>Destination</b>
+                            <small>Tank 2</small>
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <div class="content-grid prototype-bottom-grid">
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    SAFETY CONTROL
+                                </div>
+
+                                <h3>
+                                    Valve & Relay State
+                                </h3>
+
+                                <p>
+                                    Demo controls for the
+                                    prototype interface.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="control-grid">
+
+                            <div class="control-row">
+
+                                <span>Relay 1</span>
+
+                                <button
+                                    class="switch active"
+                                    data-control="relay1"
+                                    aria-label="Toggle Relay 1"
+                                >
+                                    <i></i>
+                                </button>
+
+                                <b id="relay1-state">
+                                    ON
+                                </b>
+
+                            </div>
+
+
+                            <div class="control-row">
+
+                                <span>Valve 1</span>
+
+                                <button
+                                    class="switch active"
+                                    data-control="valve1"
+                                    aria-label="Toggle Valve 1"
+                                >
+                                    <i></i>
+                                </button>
+
+                                <b id="valve1-state">
+                                    OPEN
+                                </b>
+
+                            </div>
+
+
+                            <div class="control-row">
+
+                                <span>Relay 2</span>
+
+                                <button
+                                    class="switch active"
+                                    data-control="relay2"
+                                    aria-label="Toggle Relay 2"
+                                >
+                                    <i></i>
+                                </button>
+
+                                <b id="relay2-state">
+                                    ON
+                                </b>
+
+                            </div>
+
+
+                            <div class="control-row">
+
+                                <span>Valve 2</span>
+
+                                <button
+                                    class="switch active"
+                                    data-control="valve2"
+                                    aria-label="Toggle Valve 2"
+                                >
+                                    <i></i>
+                                </button>
+
+                                <b id="valve2-state">
+                                    OPEN
+                                </b>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    SENSOR HEALTH
+                                </div>
+
+                                <h3>
+                                    Readiness Check
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="sensor-checks">
+
+                            <div>
+                                <span>
+                                    Flow Sensor 1
+                                </span>
+
+                                <b class="text-green">
+                                    Healthy
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    Flow Sensor 2
+                                </span>
+
+                                <b class="text-green">
+                                    Healthy
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    Ultrasonic Sensor
+                                </span>
+
+                                <b class="text-orange">
+                                    Pending
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    Wi-Fi Link
+                                </span>
+
+                                <b class="text-green">
+                                    Connected
+                                </b>
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <div class="data-notice">
+
+                    <span>ⓘ</span>
+
+                    <div>
+
+                        <b>
+                            Prototype data note
+                        </b>
+
+                        <p>
+                            The readings above are the current
+                            physical prototype observations.
+                            They are intentionally shown separately
+                            from the simulated DMA values used
+                            elsewhere in the dashboard.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                 ALERTS
+            ========================================== -->
+
+            <section
+                id="alerts"
+                class="page"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <div class="section-kicker">
+                            EVENT CENTER
+                        </div>
+
+                        <h2>
+                            Alerts & Events
+                        </h2>
+
+                        <p>
+                            Review active water-loss signals
+                            and their current status.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="secondary-button"
+                        id="test-alert"
+                    >
+                        🔊 Test Alert
+                    </button>
+
+                </div>
+
+
+                <div class="alert-summary-grid">
+
+                    <div class="alert-summary critical">
+                        <span>Critical</span>
+                        <strong>01</strong>
+                        <small>
+                            Immediate investigation
+                        </small>
+                    </div>
+
+                    <div class="alert-summary warning">
+                        <span>Warning</span>
+                        <strong>01</strong>
+                        <small>
+                            Monitor closely
+                        </small>
+                    </div>
+
+                    <div class="alert-summary active">
+                        <span>Active</span>
+                        <strong>01</strong>
+                        <small>
+                            Needs review
+                        </small>
+                    </div>
+
+                    <div class="alert-summary resolved">
+                        <span>Resolved</span>
+                        <strong>06</strong>
+                        <small>
+                            Historical events
+                        </small>
+                    </div>
+
+                </div>
+
+
+                <div class="alert-list">
+
+                    <article class="event-alert critical-alert">
+
+                        <div class="event-icon">
+                            !
+                        </div>
+
+                        <div class="event-main">
+
+                            <div class="event-title-row">
+
+                                <div>
+
+                                    <span class="event-type">
+                                        ACTIVE WATER LOSS ALERT
+                                    </span>
+
+                                    <h3>
+                                        DMA-03 —
+                                        Significant flow imbalance
+                                    </h3>
+
+                                </div>
+
+                                <span class="status-badge danger">
+                                    CRITICAL
+                                </span>
+
+                            </div>
+
+
+                            <p>
+                                Input 29.7 L/min vs output
+                                19.1 L/min. Possible leakage
+                                or unauthorized/unaccounted
+                                flow diversion should be investigated.
+                            </p>
+
+
+                            <div class="event-meta">
+
+                                <span>
+                                    17 Sept 2026 • 14:32
+                                </span>
+
+                                <span>
+                                    Difference:
+                                    <b>10.6 L/min</b>
+                                </span>
+
+                                <span>
+                                    Persistence:
+                                    <b>12 min</b>
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="event-actions">
+
+                            <button
+                                class="primary-button small view-alert"
+                                data-dma="DMA-03"
+                            >
+                                View Details
+                            </button>
+
+                            <button
+                                class="secondary-button small acknowledge-alert"
+                            >
+                                Acknowledge
+                            </button>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="event-alert warning-alert">
+
+                        <div class="event-icon">
+                            ⚠
+                        </div>
+
+                        <div class="event-main">
+
+                            <div class="event-title-row">
+
+                                <div>
+
+                                    <span class="event-type">
+                                        FLOW TREND WARNING
+                                    </span>
+
+                                    <h3>
+                                        DMA-02 —
+                                        Flow imbalance increasing
+                                    </h3>
+
+                                </div>
+
+                                <span class="status-badge warning">
+                                    WARNING
+                                </span>
+
+                            </div>
+
+
+                            <p>
+                                Flow difference is above the
+                                current demonstration baseline
+                                and has persisted long enough
+                                for review.
+                            </p>
+
+
+                            <div class="event-meta">
+
+                                <span>
+                                    17 Sept 2026 • 11:18
+                                </span>
+
+                                <span>
+                                    Difference:
+                                    <b>3.4 L/min</b>
+                                </span>
+
+                                <span>
+                                    Persistence:
+                                    <b>8 min</b>
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="event-actions">
+
+                            <button
+                                class="primary-button small view-alert"
+                                data-dma="DMA-02"
+                            >
+                                View Details
+                            </button>
+
+                            <button
+                                class="secondary-button small acknowledge-alert"
+                            >
+                                Acknowledge
+                            </button>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="event-alert info-alert">
+
+                        <div class="event-icon">
+                            i
+                        </div>
+
+                        <div class="event-main">
+
+                            <div class="event-title-row">
+
+                                <div>
+
+                                    <span class="event-type">
+                                        SYSTEM EVENT
+                                    </span>
+
+                                    <h3>
+                                        ESP32 devices connected
+                                    </h3>
+
+                                </div>
+
+                                <span class="status-badge normal">
+                                    INFO
+                                </span>
+
+                            </div>
+
+
+                            <p>
+                                Both prototype controllers are
+                                available for the next live-data
+                                integration stage.
+                            </p>
+
+
+                            <div class="event-meta">
+
+                                <span>
+                                    Current session
+                                </span>
+
+                                <span>
+                                    Devices:
+                                    <b>2 / 2</b>
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="event-actions">
+
+                            <button
+                                class="secondary-button small"
+                                data-page-link="prototype"
+                            >
+                                Open Hardware
+                            </button>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                 AI PREDICTION
+            ========================================== -->
+
+            <section
+                id="ai"
+                class="page"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <div class="section-kicker">
+                            INTELLIGENCE LAYER
+                        </div>
+
+                        <h2>
+                            AI Prediction
+                        </h2>
+
+                        <p>
+                            Experimental analysis built around
+                            historical flow and system-event data.
+                        </p>
+
+                    </div>
+
+                    <span class="data-chip experimental">
+                        EXPERIMENTAL
+                    </span>
+
+                </div>
+
+
+                <div class="ai-hero-grid">
+
+                    <article class="panel ai-hero-card">
+
+                        <div class="ai-orb">
+                            ✦
+                        </div>
+
+                        <span class="panel-label">
+                            CURRENT SIGNAL
+                        </span>
+
+                        <h3>
+                            Increasing water-loss risk
+                        </h3>
+
+                        <p>
+                            The demonstration model is observing
+                            a persistent flow imbalance against
+                            the current baseline.
+                        </p>
+
+                        <div class="prediction-status warning-status">
+                            WARNING
+                        </div>
+
+
+                        <div class="ai-confidence">
+
+                            <div>
+                                <span>Signal level</span>
+                                <b>72 / 100</b>
+                            </div>
+
+                            <div class="confidence-bar">
+                                <span style="width:72%"></span>
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    OBSERVED FEATURES
+                                </div>
+
+                                <h3>
+                                    Model Inputs
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="feature-list">
+
+                            <div>
+                                <span>
+                                    Flow difference
+                                </span>
+                                <b>
+                                    10.6 L/min
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    Historical baseline
+                                </span>
+                                <b>
+                                    Exceeded
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    Condition persistence
+                                </span>
+                                <b>
+                                    12 min
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    Tank level
+                                </span>
+                                <b>
+                                    48%
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    Valve state
+                                </span>
+                                <b>
+                                    Open / Open
+                                </b>
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <div class="content-grid ai-detail-grid">
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    RECOMMENDED ACTION
+                                </div>
+
+                                <h3>
+                                    Operational Next Step
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="recommendation">
+
+                            <span>
+                                ⌕
+                            </span>
+
+                            <div>
+
+                                <b>
+                                    Inspect the monitored
+                                    pipeline section associated
+                                    with DMA-03.
+                                </b>
+
+                                <p>
+                                    This is an operational suggestion
+                                    for the prototype demonstration,
+                                    not a confirmed diagnosis.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    PREDICTION STATUS
+                                </div>
+
+                                <h3>
+                                    What the model has seen
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="timeline compact">
+
+                            <div>
+                                <span>08:42</span>
+                                <b>
+                                    Flow imbalance begins increasing
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>18:20</span>
+                                <b>
+                                    Persistent deviation detected
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>09:15</span>
+                                <b>
+                                    Warning generated
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>14:32</span>
+                                <b>
+                                    Abnormal condition observed
+                                </b>
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <div class="data-notice">
+
+                    <span>ⓘ</span>
+
+                    <div>
+
+                        <b>
+                            AI limitation
+                        </b>
+
+                        <p>
+                            Prediction lead time and confidence
+                            must be established experimentally
+                            using your collected historical dataset.
+                            The current display is an experimental
+                            demonstration layer.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                 WATER ACCOUNTING
+            ========================================== -->
+
+            <section
+                id="accounting"
+                class="page"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <div class="section-kicker">
+                            WATER BALANCE
+                        </div>
+
+                        <h2>
+                            Water Accounting
+                        </h2>
+
+                        <p>
+                            Compare supplied water with accounted
+                            water and track unaccounted volume over time.
+                        </p>
+
+                    </div>
+
+                    <span class="data-chip demo">
+                        DEMO / SIMULATED
+                    </span>
+
+                </div>
+
+
+                <div class="mini-kpi-grid accounting-kpis">
+
+                    <div class="mini-kpi">
+                        <span>Water Supplied</span>
+                        <strong>24,680 L</strong>
+                        <small>Current period</small>
+                    </div>
+
+                    <div class="mini-kpi">
+                        <span>Water Accounted</span>
+                        <strong>22,940 L</strong>
+                        <small>Current period</small>
+                    </div>
+
+                    <div class="mini-kpi">
+                        <span>Unaccounted Water</span>
+                        <strong class="text-orange">
+                            1,740 L
+                        </strong>
+                        <small>
+                            7.0% of supply
+                        </small>
+                    </div>
+
+                    <div class="mini-kpi">
+                        <span>Accounted Percentage</span>
+                        <strong class="text-green">
+                            93.0%
+                        </strong>
+                        <small>
+                            Current period
+                        </small>
+                    </div>
+
+                </div>
+
+
+                <div class="content-grid accounting-grid">
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    WATER BALANCE
+                                </div>
+
+                                <h3>
+                                    Supplied vs Accounted
+                                </h3>
+
+                                <p>
+                                    Weekly demonstration trend.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="chart-wrap"
+                            id="water-usage-chart"
+                        ></div>
+
+                    </article>
+
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    LOSS TREND
+                                </div>
+
+                                <h3>
+                                    Unaccounted Water
+                                </h3>
+
+                                <p>
+                                    Weekly demonstration trend.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="chart-wrap"
+                            id="water-loss-chart"
+                        ></div>
+
+                    </article>
+
+                </div>
+
+
+                <article class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <div class="panel-label">
+                                ACCOUNTING FORMULA
+                            </div>
+
+                            <h3>
+                                Water Balance View
+                            </h3>
+
+                            <p>
+                                Simple operational view for
+                                the project demo.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="formula-row">
+
+                        <div>
+                            <span>Supplied</span>
+                            <b>24,680 L</b>
+                        </div>
+
+                        <span class="formula-sign">
+                            −
+                        </span>
+
+                        <div>
+                            <span>Accounted</span>
+                            <b>22,940 L</b>
+                        </div>
+
+                        <span class="formula-sign">
+                            =
+                        </span>
+
+                        <div class="formula-result">
+                            <span>Unaccounted</span>
+                            <b>1,740 L</b>
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- =========================================
+                 DMA DETAILS
+            ========================================== -->
+
+            <section
+                id="dma-details"
+                class="page"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <div class="section-kicker">
+                            DISTRICT DETAILS
+                        </div>
+
+                        <h2 id="dma-detail-title">
+                            DMA-03 Details
+                        </h2>
+
+                        <p id="dma-detail-subtitle">
+                            Detailed operational view
+                        </p>
+
+                    </div>
+
+
+                    <div class="heading-actions">
+
+                        <button
+                            class="secondary-button"
+                            data-page-link="monitoring"
+                        >
+                            ← Back to Monitoring
+                        </button>
+
+                        <span
+                            id="dma-detail-status"
+                            class="status-badge danger"
+                        >
+                            ALERT
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="kpi-grid detail-kpis">
+
+                    <article class="kpi-card blue-accent">
+
+                        <span class="kpi-label">
+                            Input Flow
+                        </span>
+
+                        <strong id="detail-input-flow">
+                            29.7 L/min
+                        </strong>
+
+                        <small>
+                            Monitored source flow
+                        </small>
+
+                    </article>
+
+
+                    <article class="kpi-card teal-accent">
+
+                        <span class="kpi-label">
+                            Output Flow
+                        </span>
+
+                        <strong id="detail-output-flow">
+                            19.1 L/min
+                        </strong>
+
+                        <small>
+                            Monitored destination flow
+                        </small>
+
+                    </article>
+
+
+                    <article class="kpi-card orange-accent">
+
+                        <span class="kpi-label">
+                            Flow Difference
+                        </span>
+
+                        <strong id="detail-difference">
+                            10.6 L/min
+                        </strong>
+
+                        <small>
+                            Current imbalance
+                        </small>
+
+                    </article>
+
+
+                    <article class="kpi-card blue-accent">
+
+                        <span class="kpi-label">
+                            Tank Level
+                        </span>
+
+                        <strong id="detail-tank-level">
+                            48%
+                        </strong>
+
+                        <small>
+                            Current demo level
+                        </small>
+
+                    </article>
+
+                </div>
+
+
+                <div class="content-grid detail-grid">
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    FLOW COMPARISON
+                                </div>
+
+                                <h3>
+                                    Selected DMA Flow
+                                </h3>
+
+                                <p>
+                                    Input vs output for the current DMA.
+                                </p>
+
+                            </div>
+
+                            <span class="data-chip demo">
+                                DEMO DATA
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="chart-wrap"
+                            id="dma-detail-chart"
+                        ></div>
+
+                    </article>
+
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    CURRENT STATE
+                                </div>
+
+                                <h3>
+                                    Network Information
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="detail-list">
+
+                            <div>
+                                <span>DMA Name</span>
+                                <b id="detail-dma-name">
+                                    DMA-03
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>Zone</span>
+                                <b id="detail-zone">
+                                    Industrial Zone
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>Valve 1</span>
+                                <b id="detail-valve-1">
+                                    OPEN
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>Valve 2</span>
+                                <b id="detail-valve-2">
+                                    OPEN
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>System Status</span>
+                                <b id="detail-system-status">
+                                    ALERT
+                                </b>
+                            </div>
+
+                        </div>
+
+
+                        <div class="tank-meter">
+
+                            <div>
+                                <span>Tank level</span>
+
+                                <b id="tank-meter-value">
+                                    48%
+                                </b>
+                            </div>
+
+                            <div class="health-meter">
+                                <span
+                                    id="dma-tank-progress"
+                                    style="width:48%"
+                                ></span>
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <div class="content-grid detail-analysis-grid">
+
+                    <article class="panel">
+
+                        <div class="panel-label">
+                            ANALYSIS
+                        </div>
+
+                        <h3>
+                            Observed Condition
+                        </h3>
+
+                        <p id="detail-analysis">
+                            Significant persistent imbalance observed
+                            in the current demonstration dataset.
+                            Possible leakage or unauthorized/unaccounted
+                            flow diversion should be investigated.
+                        </p>
+
+                    </article>
+
+
+                    <article class="panel">
+
+                        <div class="panel-label">
+                            RISK
+                        </div>
+
+                        <h3 id="detail-risk">
+                            HIGH
+                        </h3>
+
+                        <p>
+                            Risk label is based on the configured
+                            demonstration thresholds, not a confirmed
+                            field diagnosis.
+                        </p>
+
+                    </article>
+
+
+                    <article class="panel">
+
+                        <div class="panel-label">
+                            ACTION
+                        </div>
+
+                        <h3 id="detail-action">
+                            Inspect monitored pipeline
+                        </h3>
+
+                        <p>
+                            Review the local flow trend and
+                            physical installation.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                 SETTINGS
+            ========================================== -->
+
+            <section
+                id="settings"
+                class="page"
+            >
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <div class="section-kicker">
+                            CONFIGURATION
+                        </div>
+
+                        <h2>
+                            Settings
+                        </h2>
+
+                        <p>
+                            Configure detection thresholds,
+                            notification preferences and
+                            demo behaviour.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="settings-grid">
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    DETECTION
+                                </div>
+
+                                <h3>
+                                    Detection Settings
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <label class="setting-row">
+
+                            <span>
+
+                                <b>
+                                    Flow Difference Threshold
+                                </b>
+
+                                <small>
+                                    Trigger review when difference
+                                    exceeds this value.
+                                </small>
+
+                            </span>
+
+
+                            <input
+                                class="setting-input"
+                                id="threshold-input"
+                                type="number"
+                                value="2.0"
+                                min="0"
+                                step="0.1"
+                            >
+
+                        </label>
+
+
+                        <label class="setting-row">
+
+                            <span>
+
+                                <b>
+                                    Persistence Duration
+                                </b>
+
+                                <small>
+                                    Required persistence before
+                                    the demo alert is raised.
+                                </small>
+
+                            </span>
+
+
+                            <select
+                                class="setting-input"
+                                id="persistence-select"
+                            >
+                                <option>
+                                    1 min
+                                </option>
+
+                                <option selected>
+                                    5 min
+                                </option>
+
+                                <option>
+                                    10 min
+                                </option>
+
+                                <option>
+                                    15 min
+                                </option>
+                            </select>
+
+                        </label>
+
+                    </article>
+
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    NOTIFICATIONS
+                                </div>
+
+                                <h3>
+                                    Notification Settings
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <label class="setting-toggle-row">
+
+                            <span>
+
+                                <b>
+                                    Critical Alerts
+                                </b>
+
+                                <small>
+                                    Show high-priority
+                                    event notifications.
+                                </small>
+
+                            </span>
+
+                            <input
+                                type="checkbox"
+                                checked
+                            >
+
+                        </label>
+
+
+                        <label class="setting-toggle-row">
+
+                            <span>
+
+                                <b>
+                                    AI Predictions
+                                </b>
+
+                                <small>
+                                    Show experimental
+                                    prediction updates.
+                                </small>
+
+                            </span>
+
+                            <input
+                                type="checkbox"
+                                checked
+                            >
+
+                        </label>
+
+
+                        <label class="setting-toggle-row">
+
+                            <span>
+
+                                <b>
+                                    Alert Sound
+                                </b>
+
+                                <small>
+                                    Use browser audio
+                                    for alert tones.
+                                </small>
+
+                            </span>
+
+                            <input
+                                type="checkbox"
+                                id="sound-setting"
+                            >
+
+                        </label>
+
+                    </article>
+
+
+                    <article class="panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <div class="panel-label">
+                                    SYSTEM
+                                </div>
+
+                                <h3>
+                                    System Information
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="system-info-grid">
+
+                            <div>
+                                <span>
+                                    ESP32 Devices
+                                </span>
+
+                                <b>
+                                    2
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    Flow Sensors
+                                </span>
+
+                                <b>
+                                    2
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    Valves
+                                </span>
+
+                                <b>
+                                    2
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    Ultrasonic Sensor
+                                </span>
+
+                                <b>
+                                    Pending
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    Backend
+                                </span>
+
+                                <b>
+                                    Planned
+                                </b>
+                            </div>
+
+                            <div>
+                                <span>
+                                    Frontend
+                                </span>
+
+                                <b>
+                                    HTML / CSS / JS
+                                </b>
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <div class="data-notice">
+
+                    <span>ⓘ</span>
+
+                    <div>
+
+                        <b>
+                            Development stage
+                        </b>
+
+                        <p>
+                            The frontend is currently a polished
+                            prototype using simulated dashboard data
+                            plus real physical prototype observations.
+                            Backend and live ESP32 integration can
+                            replace these values later without
+                            changing the overall UI structure.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <div
+        id="toast-container"
+        class="toast-container"
+        aria-live="polite"
+    ></div>
+
+
+    <!-- CACHE-BUSTED SCRIPT -->
+    <script src="script.js?v=20260919-logout-fix"></script>
+
+</body>
+</html>

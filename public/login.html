@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="AquaGuard AI secure access"
+    >
+
+    <title>AquaGuard AI | Sign In</title>
+
+    <link
+        rel="stylesheet"
+        href="login.css"
+    >
+</head>
+
+<body>
+
+    <main class="login-page">
+
+        <!-- =========================================
+             LEFT SHOWCASE
+        ========================================== -->
+
+        <section class="login-showcase">
+
+            <div class="showcase-content">
+
+                <a
+                    href="login.html"
+                    class="login-brand"
+                >
+                    <span class="brand-symbol">
+                        A
+                    </span>
+
+                    <span class="brand-name">
+                        AQUAGUARD
+                    </span>
+                </a>
+
+
+                <div class="showcase-main">
+
+                    <span class="showcase-label">
+                        WATER NETWORK INTELLIGENCE
+                    </span>
+
+                    <h1>
+                        Monitor the network.<br>
+                        Understand the flow.<br>
+                        Act before the loss grows.
+                    </h1>
+
+                    <p>
+                        AquaGuard brings IoT sensing,
+                        flow monitoring, anomaly detection
+                        and water accounting into one
+                        operational control platform.
+                    </p>
+
+                </div>
+
+
+                <!-- NETWORK VISUAL -->
+
+                <div
+                    class="network-visual"
+                    aria-hidden="true"
+                >
+
+                    <div class="network-line line-one"></div>
+                    <div class="network-line line-two"></div>
+                    <div class="network-line line-three"></div>
+
+
+                    <div class="network-node node-one">
+                        <span></span>
+                    </div>
+
+                    <div class="network-node node-two">
+                        <span></span>
+                    </div>
+
+                    <div class="network-node node-three">
+                        <span></span>
+                    </div>
+
+                    <div class="network-node node-four">
+                        <span></span>
+                    </div>
+
+
+                    <div class="network-label label-one">
+                        SOURCE
+                    </div>
+
+                    <div class="network-label label-two">
+                        FLOW
+                    </div>
+
+                    <div class="network-label label-three">
+                        DMA
+                    </div>
+
+                    <div class="network-label label-four">
+                        DESTINATION
+                    </div>
+
+                </div>
+
+
+                <div class="feature-strip">
+
+                    <div class="feature-item">
+                        <strong>02</strong>
+                        <span>ESP32 DEVICES</span>
+                    </div>
+
+                    <div class="feature-item">
+                        <strong>02</strong>
+                        <span>FLOW SENSORS</span>
+                    </div>
+
+                    <div class="feature-item">
+                        <strong>LIVE</strong>
+                        <span>MONITORING</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="showcase-footer">
+
+                <span>
+                    AQUAGUARD AI
+                </span>
+
+                <span>
+                    IoT WATER MONITORING PLATFORM
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================
+             LOGIN PANEL
+        ========================================== -->
+
+        <section class="login-panel">
+
+            <div class="login-box">
+
+                <div class="mobile-brand">
+
+                    <span class="brand-symbol">
+                        A
+                    </span>
+
+                    <strong>
+                        AQUAGUARD
+                    </strong>
+
+                </div>
+
+
+                <div class="login-header">
+
+                    <span class="login-label">
+                        SECURE ACCESS
+                    </span>
+
+                    <h2>
+                        Sign in
+                    </h2>
+
+                    <p>
+                        Access the AquaGuard control center
+                        using your authorized account.
+                    </p>
+
+                </div>
+
+
+                <!-- LOGIN MESSAGE -->
+
+                <div
+                    id="login-error"
+                    class="form-message error-message"
+                    hidden
+                ></div>
+
+
+                <!-- LOGIN FORM -->
+
+                <form
+                    id="login-form"
+                    class="login-form"
+                    novalidate
+                >
+
+                    <!-- USERNAME -->
+
+                    <div class="form-group">
+
+                        <label for="username">
+                            Name or username
+                        </label>
+
+                        <input
+                            id="username"
+                            name="username"
+                            type="text"
+                            placeholder="Enter your name"
+                            autocomplete="username"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="form-group">
+
+                        <div class="label-row">
+
+                            <label for="password">
+                                Password
+                            </label>
+
+                        </div>
+
+
+                        <div class="password-field">
+
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                id="toggle-password"
+                                class="password-toggle"
+                                aria-label="Show password"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- OPTIONS -->
+
+                    <div class="login-options">
+
+                        <label class="remember-me">
+
+                            <input
+                                id="remember-me"
+                                type="checkbox"
+                            >
+
+                            <span>
+                                Remember this device
+                            </span>
+
+                        </label>
+
+
+                        <button
+                            type="button"
+                            class="forgot-link"
+                            id="forgot-password"
+                        >
+                            Need help?
+                        </button>
+
+                    </div>
+
+
+                    <!-- SIGN IN -->
+
+                    <button
+                        type="submit"
+                        class="signin-button"
+                        id="signin-button"
+                    >
+
+                        <span>
+                            Enter AquaGuard
+                        </span>
+
+                        <span class="button-arrow">
+                            →
+                        </span>
+
+                    </button>
+
+                </form>
+
+
+                <!-- LOGIN FOOTER -->
+
+                <div class="login-footer">
+
+                    <span>
+                        AquaGuard AI
+                    </span>
+
+                    <span>
+                        Secure Access
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="login.js?v=20260919-logout-fix"></script>
+
+</body>
+</html>
